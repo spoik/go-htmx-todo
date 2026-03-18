@@ -1,0 +1,20 @@
+FROM golang:1.26-alpine
+
+WORKDIR /app
+
+# Install development tools
+# We use go install for tools to keep them separate from the project's go.mod where possible
+RUN go install github.com/air-verse/air@latest
+RUN go install github.com/a-h/templ/cmd/templ@latest
+RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
+# Copy go.mod and go.sum first to leverage Docker cache
+COPY go.mod go.sum ./
+RUN go mod download
+
+# The rest of the code will be mounted via docker-compose for hot-reloading
+
+EXPOSE 8080
+
+CMD ["air"]
