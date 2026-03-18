@@ -1,43 +1,33 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
-	"log"
 	"net/http"
-	"os"
+	"log"
 
 	"github.com/a-h/templ"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/spoik/go-htmx-todo/internal/templates"
+	"github.com/spoik/go-htmx-todo/internal/db"
 )
 
 func main() {
-	dbURL := os.Getenv("DATABASE_URL")
-	if dbURL == "" {
-		log.Fatalf(
-			"DATABASE_URL environment variable is not set. This is required in order to connect to the database",
-		)
-	}
-
-	db, err := sql.Open("pgx", dbURL)
-	if err != nil {
-		log.Fatalf("Unable to connect to database: %v\n", err)
-	}
+	db := db.Connect()
 	defer db.Close()
 
-	if err := db.Ping(); err != nil {
-		log.Fatalf("Error: Could not ping database: %v\n", err)
-	}
+	mux := createServer()
+	startServer(mux, 8080)
+}
 
+func createServer() *http.ServeMux {
 	mux := http.NewServeMux()
-
 	mux.Handle("/", templ.Handler(templates.Hello("World")))
+	return mux
+}
 
-	port := 8080
-
+func startServer(mux *http.ServeMux, port int) {
 	log.Printf("Starting server on :%d\n", port)
-	err = http.ListenAndServe(
+	err := http.ListenAndServe(
 		fmt.Sprintf(":%d", port),
 		mux,
 	)
