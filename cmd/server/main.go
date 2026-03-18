@@ -15,7 +15,9 @@ import (
 func main() {
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		dbURL = "postgres://postgres:postgres@localhost:5432/todo?sslmode=disable"
+		log.Fatalf(
+			"DATABASE_URL environment variable is not set. This is required in order to connect to the database",
+		)
 	}
 
 	db, err := sql.Open("pgx", dbURL)
@@ -25,16 +27,22 @@ func main() {
 	defer db.Close()
 
 	if err := db.Ping(); err != nil {
-		log.Printf("Error: Could not ping database: %v\n", err)
-		return
+		log.Fatalf("Error: Could not ping database: %v\n", err)
 	}
 
 	mux := http.NewServeMux()
 
 	mux.Handle("/", templ.Handler(templates.Hello("World")))
 
-	fmt.Println("Server starting on :8080")
-	if err := http.ListenAndServe(":8080", mux); err != nil {
-		log.Fatal(err)
+	port := 8080
+
+	log.Printf("Starting server on :%d\n", port)
+	err = http.ListenAndServe(
+		fmt.Sprintf(":%d", port),
+		mux,
+	)
+
+	if err != nil {
+		log.Fatalf("Failed to start server: %v", err)
 	}
 }
