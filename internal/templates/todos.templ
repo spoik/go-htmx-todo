@@ -1,12 +1,12 @@
 package templates
 
-type todo struct {
+type Todo struct {
 	ID       string
 	Title    string
 	Complete bool
 }
 
-var todos = []todo{
+var todos = []Todo{
 	{
 		ID:    "1",
 		Title: "Todo 1",
@@ -18,30 +18,19 @@ var todos = []todo{
 }
 
 templ Todos() {
-	<!DOCTYPE html>
-	<html lang="en">
-		<head>
-			<meta charset="UTF-8"/>
-			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<title>Go HTMX Todos</title>
-			<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-		</head>
-		<body class="bg-blue-950 text-slate-300 p-5">
-			<main>
-				<h1 class="text-3xl">Todos</h1>
-				<ul class="mt-6 grid gap-4">
-					for _, todo := range todos {
-						<li>
-							@Todo(todo)
-						</li>
-					}
-				</ul>
-			</main>
-		</body>
-	</html>
+	@layout() {
+		<h1 class="text-3xl">Todos</h1>
+		<ul class="mt-6 grid gap-4">
+			for _, t:= range todos {
+				<li>
+					@todo(t)
+				</li>
+			}
+		</ul>
+	}
 }
 
-templ Todo(todo todo) {
+templ todo(todo Todo) {
 	{{ id := "todo-" + todo.ID }}
 	<label class="bg-blue-900 p-4 flex rounded-lg" for={ id }>
 		<input type="checkbox" id={ id }/>
