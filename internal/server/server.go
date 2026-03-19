@@ -12,7 +12,7 @@ import (
 func create() *http.ServeMux {
 	mux := http.NewServeMux()
 
-	mux.Handle("/", templ.Handler(templates.Hello("World")))
+	mux.Handle("/", templ.Handler(templates.Todos()))
 
 	return mux
 }

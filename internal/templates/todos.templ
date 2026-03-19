@@ -1,0 +1,46 @@
+package templates
+
+type todo struct {
+	ID       string
+	Title    string
+	Complete bool
+}
+
+var todos = []todo{
+	{
+		ID:    "1",
+		Title: "Todo 1",
+	},
+	{
+		ID:    "2",
+		Title: "Todo 2",
+	},
+}
+
+templ Todos() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Go HTMX Todos</title>
+			<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+		</head>
+		<body class="bg-gray-900 text-gray-100 p-5">
+			<main>
+				<h1 class="text-2xl">Todos</h1>
+				<ul class="mt-6 grid gap-4">
+					for _, todo := range todos {
+						{{ id := "todo-" + todo.ID }}
+						<li>
+							<label class="bg-gray-800 p-4 flex rounded-lg" for={ id }>
+								<input type="checkbox" id={ id }/>
+								<p class="ml-4">{ todo.Title }</p>
+							</label>
+						</li>
+					}
+				</ul>
+			</main>
+		</body>
+	</html>
+}
