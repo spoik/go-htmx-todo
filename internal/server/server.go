@@ -10,22 +10,23 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/templates"
 )
 
-var todos = []db.Todo{
-	{
-		ID:    "1",
-		Title: "Todo 1",
-	},
-	{
-		ID:       "2",
-		Title:    "Todo 2",
-		Complete: true,
-	},
-}
-
 func create() *http.ServeMux {
 	mux := http.NewServeMux()
 
-	mux.Handle("/", templ.Handler(templates.Todos(todos)))
+	var todos = []db.Todo{
+		{
+			ID:    "1",
+			Title: "Todo 1",
+		},
+		{
+			ID:       "2",
+			Title:    "Todo 2",
+			Complete: true,
+		},
+	}
+
+	mux.Handle("GET /", templ.Handler(templates.Todos(&todos)))
+	mux.HandleFunc("POST /todos/{id}", UpdateTodo(&todos))
 
 	return mux
 }

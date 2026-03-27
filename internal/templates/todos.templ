@@ -2,27 +2,36 @@ package templates
 
 import "github.com/spoik/go-htmx-todo/internal/db"
 
-templ Todos(todos []db.Todo) {
+templ Todos(todos *[]db.Todo) {
 	@layout() {
 		<h1 class="text-3xl">Todos</h1>
 		<ul class="mt-6 grid gap-4">
-			for _, t:= range todos {
+			for _, t:= range *todos {
 				<li>
-					@todo(t)
+					@Todo(t)
 				</li>
 			}
 		</ul>
 	}
 }
 
-templ todo(todo db.Todo) {
+templ Todo(todo db.Todo) {
 	{{ id := "todo-" + todo.ID }}
-	<label class="bg-blue-900 p-4 flex rounded-lg" for={ id }>
+	{{ labelId := "label-" + id }}
+	<label
+		class="bg-blue-900 p-4 flex rounded-lg"
+		for={ id }
+		id={ labelId }
+	>
 		<input
 			type="checkbox"
 			checked?={ todo.Complete }
 			name={ id }
 			id={ id }
+			hx-post={ "/todos/" + todo.ID }
+			hx-trigger="change"
+			hx-target={ "#" + labelId }
+			hx-swap="outerHTML"
 		/>
 		<p class="ml-4">{ todo.Title }</p>
 	</label>
