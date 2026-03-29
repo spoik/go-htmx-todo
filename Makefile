@@ -45,6 +45,10 @@ migrate-up: ## Run database migrations inside the app container
 migrate-down: ## Rollback database migrations inside the app container
 	docker compose exec app migrate -path migrations -database "$(DATABASE_URL)" down
 
+.PHONY: migrate-new                                                                                                                                                              │
+migrate-new: ## Create a new migration file (usage: make migrate-new name=your_migration_name)                                                                                   │
+	docker compose exec app migrate create -ext sql -dir migrations -seq $(name)
+
 .PHONY: test
 test: ## Run tests inside the app container
 	docker compose exec app go test ./...
