@@ -1,12 +1,12 @@
 package templates
 
-import "github.com/spoik/go-htmx-todo/internal/db"
+import "github.com/spoik/go-htmx-todo/internal/database"
 
-templ Todos(todos *[]db.Todo) {
+templ Todos(todos []database.Todo) {
 	@layout() {
 		<h1 class="text-3xl">Todos</h1>
 		<ul class="mt-6 grid gap-4">
-			for _, t:= range *todos {
+			for _, t:= range todos {
 				<li>
 					@Todo(t)
 				</li>
@@ -15,8 +15,8 @@ templ Todos(todos *[]db.Todo) {
 	}
 }
 
-templ Todo(todo db.Todo) {
-	{{ id := "todo-" + todo.ID }}
+templ Todo(todo database.Todo) {
+	{{ id := "todo-" + string(todo.ID) }}
 	{{ labelId := "label-" + id }}
 	<label
 		class="bg-blue-900 p-4 flex rounded-lg"
@@ -25,10 +25,10 @@ templ Todo(todo db.Todo) {
 	>
 		<input
 			type="checkbox"
-			checked?={ todo.Complete }
+			checked?={ todo.Complete.Bool }
 			name={ id }
 			id={ id }
-			hx-post={ "/todos/" + todo.ID }
+			hx-post={ "/todos/" + string(todo.ID) }
 			hx-trigger="change"
 			hx-target={ "#" + labelId }
 			hx-swap="outerHTML"

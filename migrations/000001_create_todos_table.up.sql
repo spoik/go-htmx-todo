@@ -1,5 +1,5 @@
 CREATE TABLE todos (
 	id SERIAL PRIMARY KEY,
-	name TEXT NOT NULL,
+	title TEXT NOT NULL,
 	complete BOOLEAN DEFAULt FALSE
 );

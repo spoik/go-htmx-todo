@@ -5,35 +5,20 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/a-h/templ"
-	"github.com/spoik/go-htmx-todo/internal/db"
+	"github.com/spoik/go-htmx-todo/internal/database"
 	"github.com/spoik/go-htmx-todo/internal/templates"
 )
 
-func create() *http.ServeMux {
+func Create() *http.ServeMux {
 	mux := http.NewServeMux()
 
-	var todos = []db.Todo{
-		{
-			ID:    "1",
-			Title: "Todo 1",
-		},
-		{
-			ID:       "2",
-			Title:    "Todo 2",
-			Complete: true,
-		},
-	}
-
-	mux.Handle("GET /", templ.Handler(templates.Todos(&todos)))
-	mux.HandleFunc("POST /todos/{id}", UpdateTodo(&todos))
+	mux.Handle("GET /", ListTods{})
+	mux.Handle("POST /todos/{id}", UpdateTodo{})
 
 	return mux
 }
 
-func Start(port int) {
-	mux := create()
-
+func Start(mux *http.ServeMux, port int) {
 	log.Printf("Starting server on :%d\n", port)
 	err := http.ListenAndServe(
 		fmt.Sprintf(":%d", port),
