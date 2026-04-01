@@ -1,6 +1,7 @@
 package viewmodels
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -9,27 +10,52 @@ import (
 )
 
 type Todo struct {
-	todo   queries.Todo
-	putUrl string
+	queries.Todo
+	ToggleCompleteUrl string
 }
 
-// TODO: Return an optional error to handle when route reversal fails
-func NewTodo(t queries.Todo) Todo {
-	putUrl := putURL(t)
+func NewTodo(t queries.Todo) (Todo, error) {
+	putUrl, err := toggleCompleteUrl(t)
+
+	if err != nil {
+		return Todo{}, err
+	}
 
 	return Todo{
-		todo:   t,
-		putUrl: putUrl,
-	}
+		Todo:              t,
+		ToggleCompleteUrl: putUrl,
+	}, nil
 }
 
-func putURL(t queries.Todo) string {
+func toggleCompleteUrl(t queries.Todo) (string, error) {
 	idStr := strconv.Itoa(int(t.ID))
 	return routes.ToggleTodoComplete.Reverse("id", idStr)
 }
 
+func NewTodos(todos []queries.Todo) ([]Todo, error) {
+	todoVms := make([]Todo, len(todos))
+	errs := []error{}
+
+	for i, todo := range todos {
+		todoVm, err := NewTodo(todo)
+
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+
+		todoVms[i] = todoVm
+	}
+
+	if len(errs) > 0 {
+		return []Todo{}, errors.Join(errs...)
+	}
+
+	return todoVms, nil
+}
+
 func (t Todo) InputId() string {
-	return fmt.Sprintf("todo-%d", t.todo.ID)
+	return fmt.Sprintf("todo-%d", t.ID)
 }
 
 func (t Todo) LabelId() string {
@@ -37,12 +63,5 @@ func (t Todo) LabelId() string {
 }
 
 func (t Todo) IsChecked() bool {
-	return t.todo.Complete.Bool
-}
-
-func (t Todo) TodoTitle() string {
-	return t.todo.Title
-}
-func (t Todo) PutURL() string {
-	return t.putUrl
+	return t.Complete.Bool
 }

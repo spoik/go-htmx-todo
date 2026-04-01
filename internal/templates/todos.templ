@@ -1,17 +1,14 @@
 package templates
 
-import (
-"github.com/spoik/go-htmx-todo/internal/database/queries"
-"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
-)
+import "github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
 
-templ Todos(todos []queries.Todo) {
+templ Todos(todos []viewmodels.Todo) {
 	@layout() {
 		<h1 class="text-3xl">Todos</h1>
 		<ul class="mt-6 grid gap-4">
 			for _, t:= range todos {
 				<li>
-					@Todo(viewmodels.NewTodo(t))
+					@Todo(t)
 				</li>
 			}
 		</ul>
@@ -29,11 +26,11 @@ templ Todo(todo viewmodels.Todo) {
 			checked?={ todo.IsChecked() }
 			name={ todo.InputId() }
 			id={ todo.InputId() }
-			hx-put={ todo.PutURL() }
+			hx-put={ todo.ToggleCompleteUrl }
 			hx-trigger="change"
 			hx-target={ "#" + todo.LabelId() }
 			hx-swap="outerHTML"
 		/>
-		<p class="ml-4">{ todo.TodoTitle() }</p>
+		<p class="ml-4">{ todo.Title }</p>
 	</label>
 }

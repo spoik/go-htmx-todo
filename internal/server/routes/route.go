@@ -15,21 +15,21 @@ func (r route) Pattern() string {
 	return fmt.Sprintf("%s %s", r.verb, r.path)
 }
 
-func (r route) Reverse(params ...string) string {
+// Returns the path with params replaced with values.
+func (r route) Reverse(params ...string) (string, error) {
 	replacer := r.createReverseReplacer(params...)
 
 	path := replacer.Replace(r.path)
 
+	// Check if there are any params in the path that haven't been substituted.
 	if strings.ContainsAny(path, "{}") {
-		panic(
-			fmt.Sprintf(
-				"Route reverse failed. Not all params were replaced in the following: %s",
-				path,
-			),
+		return "", fmt.Errorf(
+			"Route reverse failed. Not all params were replaced in the following: %s",
+			path,
 		)
 	}
 
-	return path
+	return path, nil
 }
 
 func (r route) createReverseReplacer(params ...string) *strings.Replacer {

@@ -6,6 +6,7 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
 	"github.com/spoik/go-htmx-todo/internal/server/response"
 	"github.com/spoik/go-htmx-todo/internal/templates"
+	"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
 )
 
 type listTodos struct {
@@ -24,5 +25,12 @@ func (l listTodos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templates.Todos(todos).Render(r.Context(), w)
+	todoVms, err := viewmodels.NewTodos(todos)
+
+	if err != nil {
+		response.InternalServerError(w, r, err)
+		return
+	}
+
+	templates.Todos(todoVms).Render(r.Context(), w)
 }

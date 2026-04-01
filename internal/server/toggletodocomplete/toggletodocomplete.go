@@ -34,7 +34,13 @@ func (u toggleTodoComplete) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	todoVm := viewmodels.NewTodo(todo)
+	todoVm, err := viewmodels.NewTodo(todo)
+
+	if err != nil {
+		response.InternalServerError(w, r, err)
+		return
+	}
+
 	templates.Todo(todoVm).Render(r.Context(), w)
 }
 
