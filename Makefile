@@ -52,3 +52,7 @@ migrate-new: ## Create a new migration file (usage: make migrate-new name=your_m
 .PHONY: test
 test: ## Run tests inside the app container
 	docker compose exec app go test ./...
+
+.PHONY: go-vet
+go-vet: ## Run go vet to surface an errors
+	docker compose exec -T app go vet cmd/server/main.go
