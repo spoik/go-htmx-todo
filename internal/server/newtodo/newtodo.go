@@ -5,4 +5,4 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/templates"
 )
 
-var NewTodo = templ.Handler(templates.NewTodo())
+var NewTodo = templ.Handler(templates.TodoForm("", ""))

@@ -30,6 +30,7 @@ templ Todo(todo viewmodels.Todo) {
 		class="bg-blue-900 p-4 flex rounded-lg"
 		for={ todo.InputId() }
 		id={ todo.LabelId() }
+		hx-target="this"
 	>
 		<input
 			type="checkbox"
@@ -38,7 +39,6 @@ templ Todo(todo viewmodels.Todo) {
 			id={ todo.InputId() }
 			hx-put={ todo.ToggleCompleteUrl }
 			hx-trigger="change"
-			hx-target={ "#" + todo.LabelId() }
 			hx-swap="outerHTML"
 		/>
 		<p class="ml-4">{ todo.Title }</p>
@@ -46,15 +46,25 @@ templ Todo(todo viewmodels.Todo) {
 }
 
 // TODO: Show an optional error
-templ NewTodo() {
-	<form hx-post={routes.CreateTodo.Reverse()} class="flex gap-4">
-		<label for="new-todo-title" class="sr-only">Title</label>
-		<input
-			type="text"
-			id="new-todo-title"
-			name="title"
-			class="flex-auto bg-white p-2 text-black"
-		/>
-		<input type="submit" class="py-2 px-4 bg-blue-900 " value="Add"/>
-	</form>
+templ TodoForm(title string, err string) {
+	<div hx-target="this">
+		<form
+			hx-post={ routes.CreateTodo.Reverse() }
+			class="flex gap-4"
+			hx-swap="outerHTML"
+		>
+			<label for="new-todo-title" class="sr-only">Title</label>
+			<input
+				type="text"
+				id="new-todo-title"
+				name="title"
+				class="flex-auto bg-white p-2 text-black"
+				value={title}
+			/>
+			<input type="submit" class="py-2 px-4 bg-blue-900 " value="Add"/>
+		</form>
+		if err != "" {
+			<p class="text-red-500 mt-2">{ err }</p>
+		}
+	</div>
 }
