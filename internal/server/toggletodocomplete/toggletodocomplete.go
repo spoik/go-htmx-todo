@@ -41,7 +41,6 @@ func (u toggleTodoComplete) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: Handle errors returned from rendering. Test if error handling can be done in the template and then returned here.
 	templates.Todo(todoVm).Render(r.Context(), w)
 }
 
