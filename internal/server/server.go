@@ -7,10 +7,11 @@ import (
 
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
 	"github.com/spoik/go-htmx-todo/internal/server/listtodos"
+	"github.com/spoik/go-htmx-todo/internal/server/middleware"
 )
 
 type Server struct {
-	mux     *http.ServeMux
+	handler *http.Handler
 	queries *queries.Queries
 }
 
@@ -20,8 +21,10 @@ func New(q *queries.Queries) *Server {
 	mux.Handle("GET /", listtodos.New(q))
 	mux.Handle("POST /todos/{id}", UpdateTodo{})
 
+	wrappedMux := middleware.LogRequests(mux)
+
 	return &Server{
-		mux:     mux,
+		handler: &wrappedMux,
 		queries: q,
 	}
 }
@@ -30,7 +33,7 @@ func (s *Server) Start(port int) {
 	log.Printf("Starting server on :%d\n", port)
 	err := http.ListenAndServe(
 		fmt.Sprintf(":%d", port),
-		s.mux,
+		*s.handler,
 	)
 
 	if err != nil {
