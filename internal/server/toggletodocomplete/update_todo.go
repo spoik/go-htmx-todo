@@ -10,6 +10,7 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
 	"github.com/spoik/go-htmx-todo/internal/server/response"
 	"github.com/spoik/go-htmx-todo/internal/templates"
+	"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
 )
 
 type toggleTodoComplete struct {
@@ -33,7 +34,8 @@ func (u toggleTodoComplete) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templates.Todo(todo).Render(r.Context(), w)
+	todoVm := viewmodels.NewTodo(todo)
+	templates.Todo(todoVm).Render(r.Context(), w)
 }
 
 func (u toggleTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (queries.Todo, error) {

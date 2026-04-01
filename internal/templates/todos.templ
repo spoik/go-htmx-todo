@@ -1,10 +1,8 @@
 package templates
 
 import (
-	"fmt"
-	"github.com/spoik/go-htmx-todo/internal/database/queries"
-	"github.com/spoik/go-htmx-todo/internal/server/routes"
-	"strconv"
+"github.com/spoik/go-htmx-todo/internal/database/queries"
+"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
 )
 
 templ Todos(todos []queries.Todo) {
@@ -13,31 +11,29 @@ templ Todos(todos []queries.Todo) {
 		<ul class="mt-6 grid gap-4">
 			for _, t:= range todos {
 				<li>
-					@Todo(t)
+					@Todo(viewmodels.NewTodo(t))
 				</li>
 			}
 		</ul>
 	}
 }
 
-templ Todo(todo queries.Todo) {
-	{{ id := fmt.Sprintf("todo-%d", todo.ID) }}
-	{{ labelId := "label-" + id }}
+templ Todo(todo viewmodels.Todo) {
 	<label
 		class="bg-blue-900 p-4 flex rounded-lg"
-		for={ id }
-		id={ labelId }
+		for={ todo.InputId() }
+		id={ todo.LabelId() }
 	>
 		<input
 			type="checkbox"
-			checked?={ todo.Complete.Bool }
-			name={ id }
-			id={ id }
-			hx-put={ routes.ToggleTodoComplete.Reverse("id", strconv.Itoa(int(todo.ID))) }
+			checked?={ todo.IsChecked() }
+			name={ todo.InputId() }
+			id={ todo.InputId() }
+			hx-put={ todo.PutURL() }
 			hx-trigger="change"
-			hx-target={ "#" + labelId }
+			hx-target={ "#" + todo.LabelId() }
 			hx-swap="outerHTML"
 		/>
-		<p class="ml-4">{ todo.Title }</p>
+		<p class="ml-4">{ todo.TodoTitle() }</p>
 	</label>
 }
