@@ -7,8 +7,8 @@ import (
 
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
 	"github.com/spoik/go-htmx-todo/internal/server/listtodos"
-	"github.com/spoik/go-htmx-todo/internal/server/updatetodo"
 	"github.com/spoik/go-htmx-todo/internal/server/middleware"
+	"github.com/spoik/go-htmx-todo/internal/server/toggletodocomplete"
 )
 
 type Server struct {
@@ -20,7 +20,7 @@ func New(q *queries.Queries) *Server {
 	mux := http.NewServeMux()
 
 	mux.Handle("GET /", listtodos.New(q))
-	mux.Handle("PUT /todos/{id}", updatetodo.New(q))
+	mux.Handle("PUT /todos/{id}/togglecomplete", toggletodocomplete.New(q))
 
 	wrappedMux := middleware.LogRequests(mux)
 

@@ -1,4 +1,4 @@
-package updatetodo
+package toggletodocomplete
 
 import (
 	"database/sql"
@@ -12,15 +12,15 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/templates"
 )
 
-type updateTodo struct {
+type toggleTodoComplete struct {
 	queries *queries.Queries
 }
 
-func New(q *queries.Queries) updateTodo {
-	return updateTodo{queries: q}
+func New(q *queries.Queries) toggleTodoComplete {
+	return toggleTodoComplete{queries: q}
 }
 
-func (u updateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (u toggleTodoComplete) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	todo, err := u.getTodo(w, r)
 
 	if err != nil {
@@ -36,7 +36,7 @@ func (u updateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	templates.Todo(todo).Render(r.Context(), w)
 }
 
-func (u updateTodo) getTodo(w http.ResponseWriter, r *http.Request) (queries.Todo, error) {
+func (u toggleTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (queries.Todo, error) {
 	id := r.PathValue("id")
 
 	idInt, err := strconv.ParseInt(id, 10, 32)
@@ -65,7 +65,7 @@ func (u updateTodo) getTodo(w http.ResponseWriter, r *http.Request) (queries.Tod
 	return todo, nil
 }
 
-func (u updateTodo) toggleTodoComplete(w http.ResponseWriter, r *http.Request, todo queries.Todo) (queries.Todo, error) {
+func (u toggleTodoComplete) toggleTodoComplete(w http.ResponseWriter, r *http.Request, todo queries.Todo) (queries.Todo, error) {
 	params := queries.UpdateTodoCompleteParams{
 		ID: todo.ID,
 		Complete: pgtype.Bool{
