@@ -9,6 +9,17 @@ import (
 	"context"
 )
 
+const getTodo = `-- name: GetTodo :one
+SELECT id, title, complete FROM todos WHERE id=$1 LIMIT 1
+`
+
+func (q *Queries) GetTodo(ctx context.Context, id int32) (Todo, error) {
+	row := q.db.QueryRow(ctx, getTodo, id)
+	var i Todo
+	err := row.Scan(&i.ID, &i.Title, &i.Complete)
+	return i, err
+}
+
 const getTodos = `-- name: GetTodos :many
 SELECT id, title, complete FROM todos
 `

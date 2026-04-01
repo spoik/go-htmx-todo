@@ -1,39 +1,42 @@
 package server
 
 import (
-	"errors"
+	// "log"
 	"net/http"
+	"strconv"
 
-	"github.com/spoik/go-htmx-todo/internal/server/response"
+	"github.com/spoik/go-htmx-todo/internal/database/queries"
+	// "github.com/spoik/go-htmx-todo/internal/server/response"
 	// "github.com/spoik/go-htmx-todo/internal/templates"
 )
 
-type UpdateTodo struct{}
+type UpdateTodo struct {
+	queries *queries.Queries
+}
 
 func (u UpdateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	response.InternalServerError(w, r, errors.New("Needs to be implemented"))
-	// id := r.PathValue("id")
+	id := r.PathValue("id")
+
+	_, err := strconv.ParseInt(id, 10, 32)
+
+	if err != nil {
+		http.Error(
+			w,
+			"Invalid todo id. Must be an integer.",
+			http.StatusUnprocessableEntity,
+		)
+		return
+	}
+
+	// todo, err := u.queries.GetTodo(r.Context(), int32(idInt))
+	// log.Printf("%v", err)
 	//
-	// if todos == nil {
-	// 	http.Error(w, "Todos \"database\" is nil.", http.StatusInternalServerError)
+	// if err != nil {
+	// 	response.InternalServerError(w, r, err)
 	// 	return
 	// }
 	//
-	// var todo *db.Todo
+	// todo.Complete.Bool = !todo.Complete.Bool
 	//
-	// for i, t := range *todos {
-	// 	if t.ID == id {
-	// 		todo = &(*todos)[i]
-	// 	}
-	// }
-	//
-	// if todo == nil {
-	// 	http.NotFound(w, r)
-	// 	return
-	// }
-	//
-	// todo.Complete = !todo.Complete
-	//
-	// templates.Todo(*todo).Render(r.Context(), w)
-	// return
+	// templates.Todo(todo).Render(r.Context(), w)
 }

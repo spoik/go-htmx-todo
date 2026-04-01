@@ -7,6 +7,7 @@ import (
 
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
 	"github.com/spoik/go-htmx-todo/internal/server/listtodos"
+	"github.com/spoik/go-htmx-todo/internal/server/updatetodo"
 	"github.com/spoik/go-htmx-todo/internal/server/middleware"
 )
 
@@ -19,7 +20,7 @@ func New(q *queries.Queries) *Server {
 	mux := http.NewServeMux()
 
 	mux.Handle("GET /", listtodos.New(q))
-	mux.Handle("POST /todos/{id}", UpdateTodo{})
+	mux.Handle("POST /todos/{id}", updatetodo.New(q))
 
 	wrappedMux := middleware.LogRequests(mux)
 

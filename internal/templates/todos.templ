@@ -2,9 +2,8 @@ package templates
 
 import (
 	"fmt"
-	"strconv"
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
-	"log"
+	"strconv"
 )
 
 templ Todos(todos []queries.Todo) {
@@ -22,7 +21,6 @@ templ Todos(todos []queries.Todo) {
 
 templ Todo(todo queries.Todo) {
 	{{ id := fmt.Sprintf("todo-%d", todo.ID) }}
-	{{ log.Printf(id) }}
 	{{ labelId := "label-" + id }}
 	<label
 		class="bg-blue-900 p-4 flex rounded-lg"
