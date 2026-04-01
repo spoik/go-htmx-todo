@@ -7,6 +7,8 @@ package queries
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const getTodo = `-- name: GetTodo :one
@@ -42,4 +44,23 @@ func (q *Queries) GetTodos(ctx context.Context) ([]Todo, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateTodoComplete = `-- name: UpdateTodoComplete :one
+UPDATE todos
+SET complete = $2
+WHERE id = $1
+RETURNING id, title, complete
+`
+
+type UpdateTodoCompleteParams struct {
+	ID       int32
+	Complete pgtype.Bool
+}
+
+func (q *Queries) UpdateTodoComplete(ctx context.Context, arg UpdateTodoCompleteParams) (Todo, error) {
+	row := q.db.QueryRow(ctx, updateTodoComplete, arg.ID, arg.Complete)
+	var i Todo
+	err := row.Scan(&i.ID, &i.Title, &i.Complete)
+	return i, err
 }

@@ -1,9 +1,12 @@
 package updatetodo
 
 import (
+	"database/sql"
+	"errors"
 	"net/http"
 	"strconv"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
 	"github.com/spoik/go-htmx-todo/internal/server/response"
 	"github.com/spoik/go-htmx-todo/internal/templates"
@@ -24,7 +27,11 @@ func (u updateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	todo.Complete.Bool = !todo.Complete.Bool
+	todo, err = u.toggleTodoComplete(w, r, todo)
+
+	if err != nil {
+		return
+	}
 
 	templates.Todo(todo).Render(r.Context(), w)
 }
@@ -44,6 +51,30 @@ func (u updateTodo) getTodo(w http.ResponseWriter, r *http.Request) (queries.Tod
 	}
 
 	todo, err := u.queries.GetTodo(r.Context(), int32(idInt))
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
+		} else {
+			response.InternalServerError(w, r, err)
+		}
+
+		return queries.Todo{}, err
+	}
+
+	return todo, nil
+}
+
+func (u updateTodo) toggleTodoComplete(w http.ResponseWriter, r *http.Request, todo queries.Todo) (queries.Todo, error) {
+	params := queries.UpdateTodoCompleteParams{
+		ID: todo.ID,
+		Complete: pgtype.Bool{
+			Bool:  !todo.Complete.Bool,
+			Valid: true,
+		},
+	}
+
+	todo, err := u.queries.UpdateTodoComplete(r.Context(), params)
 
 	if err != nil {
 		response.InternalServerError(w, r, err)
