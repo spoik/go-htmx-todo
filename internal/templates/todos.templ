@@ -3,6 +3,7 @@ package templates
 import (
 	"fmt"
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
+	"github.com/spoik/go-htmx-todo/internal/server/routes"
 	"strconv"
 )
 
@@ -32,7 +33,7 @@ templ Todo(todo queries.Todo) {
 			checked?={ todo.Complete.Bool }
 			name={ id }
 			id={ id }
-			hx-put={ fmt.Sprintf("/todos/%s/togglecomplete", strconv.Itoa(int(todo.ID))) }
+			hx-put={ routes.ToggleTodoComplete.Reverse("id", strconv.Itoa(int(todo.ID))) }
 			hx-trigger="change"
 			hx-target={ "#" + labelId }
 			hx-swap="outerHTML"
