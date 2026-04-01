@@ -8,15 +8,15 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/templates"
 )
 
-type ListTodos struct {
+type listTodos struct {
 	queries *queries.Queries
 }
 
-func New(q *queries.Queries) ListTodos {
-	return ListTodos{queries: q}
+func New(q *queries.Queries) listTodos {
+	return listTodos{queries: q}
 }
 
-func (l ListTodos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (l listTodos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	todos, err := l.queries.GetTodos(r.Context())
 
 	if err != nil {
