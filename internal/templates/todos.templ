@@ -32,7 +32,7 @@ templ Todo(todo queries.Todo) {
 			checked?={ todo.Complete.Bool }
 			name={ id }
 			id={ id }
-			hx-post={ "/todos/" + strconv.Itoa(int(todo.ID)) }
+			hx-put={ "/todos/" + strconv.Itoa(int(todo.ID)) }
 			hx-trigger="change"
 			hx-target={ "#" + labelId }
 			hx-swap="outerHTML"

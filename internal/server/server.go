@@ -20,7 +20,7 @@ func New(q *queries.Queries) *Server {
 	mux := http.NewServeMux()
 
 	mux.Handle("GET /", listtodos.New(q))
-	mux.Handle("POST /todos/{id}", updatetodo.New(q))
+	mux.Handle("PUT /todos/{id}", updatetodo.New(q))
 
 	wrappedMux := middleware.LogRequests(mux)
 
