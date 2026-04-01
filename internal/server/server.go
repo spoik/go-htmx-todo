@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
-	// "github.com/spoik/go-htmx-todo/internal/templates"
+	"github.com/spoik/go-htmx-todo/internal/server/listtodos"
 )
 
 type Server struct {
@@ -17,7 +17,7 @@ type Server struct {
 func New(q *queries.Queries) *Server {
 	mux := http.NewServeMux()
 
-	mux.Handle("GET /", ListTodos{})
+	mux.Handle("GET /", listtodos.New(q))
 	mux.Handle("POST /todos/{id}", UpdateTodo{})
 
 	return &Server{
