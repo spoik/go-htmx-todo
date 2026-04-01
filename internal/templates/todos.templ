@@ -45,6 +45,7 @@ templ Todo(todo viewmodels.Todo) {
 	</label>
 }
 
+// TODO: Show an optional error
 templ NewTodo() {
 	<form hx-post={routes.CreateTodo.Reverse()} class="flex gap-4">
 		<label for="new-todo-title" class="sr-only">Title</label>
