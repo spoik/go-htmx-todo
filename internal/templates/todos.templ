@@ -1,6 +1,11 @@
 package templates
 
-import "github.com/spoik/go-htmx-todo/internal/database/queries"
+import (
+	"fmt"
+	"strconv"
+	"github.com/spoik/go-htmx-todo/internal/database/queries"
+	"log"
+)
 
 templ Todos(todos []queries.Todo) {
 	@layout() {
@@ -16,7 +21,8 @@ templ Todos(todos []queries.Todo) {
 }
 
 templ Todo(todo queries.Todo) {
-	{{ id := "todo-" + string(todo.ID) }}
+	{{ id := fmt.Sprintf("todo-%d", todo.ID) }}
+	{{ log.Printf(id) }}
 	{{ labelId := "label-" + id }}
 	<label
 		class="bg-blue-900 p-4 flex rounded-lg"
@@ -28,7 +34,7 @@ templ Todo(todo queries.Todo) {
 			checked?={ todo.Complete.Bool }
 			name={ id }
 			id={ id }
-			hx-post={ "/todos/" + string(todo.ID) }
+			hx-post={ "/todos/" + strconv.Itoa(int(todo.ID)) }
 			hx-trigger="change"
 			hx-target={ "#" + labelId }
 			hx-swap="outerHTML"
