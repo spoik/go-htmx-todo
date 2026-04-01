@@ -23,7 +23,7 @@ func (q *Queries) GetTodo(ctx context.Context, id int32) (Todo, error) {
 }
 
 const getTodos = `-- name: GetTodos :many
-SELECT id, title, complete FROM todos
+SELECT id, title, complete FROM todos ORDER BY id DESC
 `
 
 func (q *Queries) GetTodos(ctx context.Context) ([]Todo, error) {

@@ -1,5 +1,5 @@
 -- name: GetTodos :many
-SELECT * FROM todos;
+SELECT * FROM todos ORDER BY id DESC;
 
 -- name: GetTodo :one
 SELECT * FROM todos WHERE id=$1 LIMIT 1;
