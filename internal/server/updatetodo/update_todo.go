@@ -18,6 +18,18 @@ func New(q *queries.Queries) updateTodo {
 }
 
 func (u updateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	todo, err := u.getTodo(w, r)
+
+	if err != nil {
+		return
+	}
+
+	todo.Complete.Bool = !todo.Complete.Bool
+
+	templates.Todo(todo).Render(r.Context(), w)
+}
+
+func (u updateTodo) getTodo(w http.ResponseWriter, r *http.Request) (queries.Todo, error) {
 	id := r.PathValue("id")
 
 	idInt, err := strconv.ParseInt(id, 10, 32)
@@ -28,17 +40,15 @@ func (u updateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			"Invalid todo id. Must be an integer.",
 			http.StatusUnprocessableEntity,
 		)
-		return
+		return queries.Todo{}, err
 	}
 
 	todo, err := u.queries.GetTodo(r.Context(), int32(idInt))
 
 	if err != nil {
 		response.InternalServerError(w, r, err)
-		return
+		return queries.Todo{}, err
 	}
 
-	todo.Complete.Bool = !todo.Complete.Bool
-
-	templates.Todo(todo).Render(r.Context(), w)
+	return todo, nil
 }
