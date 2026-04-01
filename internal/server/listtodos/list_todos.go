@@ -20,7 +20,7 @@ func (l ListTodos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	todos, err := l.queries.GetTodos(r.Context())
 
 	if err != nil {
-		response.InternalServerError(w, err)
+		response.InternalServerError(w, r, err)
 		return
 	}
 

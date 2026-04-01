@@ -1,14 +1,17 @@
 package server
 
 import (
+	"errors"
 	"net/http"
+
+	"github.com/spoik/go-htmx-todo/internal/server/response"
 	// "github.com/spoik/go-htmx-todo/internal/templates"
 )
 
 type UpdateTodo struct{}
 
 func (u UpdateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "Needs to be implemented.", http.StatusInternalServerError)
+	response.InternalServerError(w, r, errors.New("Needs to be implemented"))
 	// id := r.PathValue("id")
 	//
 	// if todos == nil {
