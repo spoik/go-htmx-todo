@@ -18,6 +18,11 @@ func New(q *queries.Queries) listTodos {
 }
 
 func (l listTodos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+
 	todos, err := l.queries.GetTodos(r.Context())
 
 	if err != nil {
