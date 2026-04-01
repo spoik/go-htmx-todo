@@ -1,8 +1,8 @@
 package templates
 
-import "github.com/spoik/go-htmx-todo/internal/database"
+import "github.com/spoik/go-htmx-todo/internal/database/queries"
 
-templ Todos(todos []database.Todo) {
+templ Todos(todos []queries.Todo) {
 	@layout() {
 		<h1 class="text-3xl">Todos</h1>
 		<ul class="mt-6 grid gap-4">
@@ -15,7 +15,7 @@ templ Todos(todos []database.Todo) {
 	}
 }
 
-templ Todo(todo database.Todo) {
+templ Todo(todo queries.Todo) {
 	{{ id := "todo-" + string(todo.ID) }}
 	{{ labelId := "label-" + id }}
 	<label

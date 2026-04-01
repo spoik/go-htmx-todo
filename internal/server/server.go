@@ -5,24 +5,32 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/spoik/go-htmx-todo/internal/database"
-	"github.com/spoik/go-htmx-todo/internal/templates"
+	"github.com/spoik/go-htmx-todo/internal/database/queries"
+	// "github.com/spoik/go-htmx-todo/internal/templates"
 )
 
-func Create() *http.ServeMux {
-	mux := http.NewServeMux()
-
-	mux.Handle("GET /", ListTods{})
-	mux.Handle("POST /todos/{id}", UpdateTodo{})
-
-	return mux
+type Server struct {
+	mux     *http.ServeMux
+	queries *queries.Queries
 }
 
-func Start(mux *http.ServeMux, port int) {
+func New(q *queries.Queries) *Server {
+	mux := http.NewServeMux()
+
+	mux.Handle("GET /", ListTodos{})
+	mux.Handle("POST /todos/{id}", UpdateTodo{})
+
+	return &Server{
+		mux:     mux,
+		queries: q,
+	}
+}
+
+func (s *Server) Start(port int) {
 	log.Printf("Starting server on :%d\n", port)
 	err := http.ListenAndServe(
 		fmt.Sprintf(":%d", port),
-		mux,
+		s.mux,
 	)
 
 	if err != nil {

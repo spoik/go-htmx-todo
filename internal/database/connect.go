@@ -1,12 +1,14 @@
 package database
 
 import (
-	"database/sql"
+	"context"
 	"log"
 	"os"
+
+	"github.com/jackc/pgx/v5"
 )
 
-func Connect() *sql.DB {
+func Connect(ctx context.Context) *pgx.Conn {
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
 		log.Fatalf(
@@ -14,16 +16,16 @@ func Connect() *sql.DB {
 		)
 	}
 
-	db, err := sql.Open("pgx", dbURL)
+	con, err := pgx.Connect(ctx, dbURL)
 
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
 
-	if err := db.Ping(); err != nil {
-		db.Close()
+	if err := con.Ping(ctx); err != nil {
+		con.Close(ctx)
 		log.Fatalf("Error: Could not ping database: %v\n", err)
 	}
 
-	return db
+	return con
 }
