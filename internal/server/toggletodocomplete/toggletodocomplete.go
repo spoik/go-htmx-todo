@@ -34,14 +34,7 @@ func (u toggleTodoComplete) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	todoVm, err := viewmodels.NewTodo(todo)
-
-	if err != nil {
-		response.InternalServerError(w, r, err)
-		return
-	}
-
-	templates.Todo(todoVm).Render(r.Context(), w)
+	u.renderUpdatedTodo(w, r, todo)
 }
 
 func (u toggleTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (queries.Todo, error) {
@@ -50,11 +43,8 @@ func (u toggleTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (que
 	idInt, err := strconv.ParseInt(id, 10, 32)
 
 	if err != nil {
-		http.Error(
-			w,
-			"Invalid todo id. Must be an integer.",
-			http.StatusUnprocessableEntity,
-		)
+		error := errors.New("Invalid todo id. Must be an integer.")
+		response.GenericHTMLError(w, r, error, nil)
 		return queries.Todo{}, err
 	}
 
@@ -64,7 +54,7 @@ func (u toggleTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (que
 		if errors.Is(err, sql.ErrNoRows) {
 			http.NotFound(w, r)
 		} else {
-			response.InternalServerError(w, r, err)
+			response.GenericHTMLError(w, r, err, nil)
 		}
 
 		return queries.Todo{}, err
@@ -75,19 +65,42 @@ func (u toggleTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (que
 
 func (u toggleTodoComplete) toggleTodoComplete(w http.ResponseWriter, r *http.Request, todo queries.Todo) (queries.Todo, error) {
 	params := queries.UpdateTodoCompleteParams{
-		ID: todo.ID,
+		ID: todo.ID + 999999,
 		Complete: pgtype.Bool{
 			Bool:  !todo.Complete.Bool,
 			Valid: true,
 		},
 	}
 
-	todo, err := u.queries.UpdateTodoComplete(r.Context(), params)
+	updatedTodo, err := u.queries.UpdateTodoComplete(r.Context(), params)
 
 	if err != nil {
-		response.InternalServerError(w, r, err)
+		u.genericHTMLError(w, r, todo, err)
 		return queries.Todo{}, err
 	}
 
-	return todo, nil
+	return updatedTodo, nil
+}
+
+func (u toggleTodoComplete) renderUpdatedTodo(w http.ResponseWriter, r *http.Request, todo queries.Todo) {
+	todoVm, err := viewmodels.NewTodo(todo)
+
+	if err != nil {
+		response.InternalServerError(w, r, err)
+		return
+	}
+
+	templates.Todo(todoVm).Render(r.Context(), w)
+}
+
+func (u toggleTodoComplete) genericHTMLError(w http.ResponseWriter, r *http.Request, todo queries.Todo, err error) {
+	// TODO: Figure out how to return this error without the generic error message being repeated over and over.
+	todoVm, err := viewmodels.NewTodo(todo)
+
+	if err != nil {
+		response.InternalServerError(w, r, err)
+		return
+	}
+
+	response.GenericHTMLError(w, r, err, templates.Todo(todoVm))
 }

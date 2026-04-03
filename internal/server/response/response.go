@@ -19,7 +19,7 @@ func InternalServerError(w http.ResponseWriter, r *http.Request, err error) {
 }
 
 func GenericHTMLError(w http.ResponseWriter, r *http.Request, err error, component templ.Component) {
-	templates.GenericError(templates.AddTodo()).Render(r.Context(), w)
+	templates.GenericError(component).Render(r.Context(), w)
 	slog.Error(
 		"Unhandled error",
 		"method", r.Method,
