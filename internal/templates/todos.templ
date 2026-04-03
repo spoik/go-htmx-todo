@@ -15,14 +15,18 @@ templ Todos(todos []viewmodels.Todo) {
 				</li>
 			}
 		</ul>
-		<div class="mt-3" id="new-todo">
-			<a
-				href="something"
-				hx-get={ routes.NewTodo.Reverse() }
-				hx-swap="outerHTML"
-			>+ Add todo</a>
+		<div class="mt-3">
+			@AddTodo()
 		</div>
 	}
+}
+
+templ AddTodo() {
+	<a
+		href="#"
+		hx-get={ routes.NewTodo.Reverse() }
+		hx-swap="outerHTML"
+	>+ Add todo</a>
 }
 
 templ Todo(todo viewmodels.Todo) {
@@ -45,7 +49,6 @@ templ Todo(todo viewmodels.Todo) {
 	</label>
 }
 
-// TODO: Show an optional error
 templ TodoForm(title string, err string) {
 	<div hx-target="this">
 		<form
@@ -59,7 +62,7 @@ templ TodoForm(title string, err string) {
 				id="new-todo-title"
 				name="title"
 				class="flex-auto bg-white p-2 text-black"
-				value={title}
+				value={ title }
 			/>
 			<input type="submit" class="py-2 px-4 bg-blue-900 " value="Add"/>
 		</form>

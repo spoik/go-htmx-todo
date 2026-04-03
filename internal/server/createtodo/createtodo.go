@@ -26,13 +26,15 @@ func (c CreateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	todo, err := c.queries.InsertTodo(r.Context(), title)
 
 	if err != nil {
-		response.InternalServerError(w, r, err)
+		response.GenericHTMLError(w, r, err, templates.AddTodo())
+		return
 	}
 
 	todoVm, err := viewmodels.NewTodo(todo)
 
 	if err != nil {
-		response.InternalServerError(w, r, err)
+		response.GenericHTMLError(w, r, err, templates.AddTodo())
+		return
 	}
 
 	templates.Todo(todoVm).Render(r.Context(), w)

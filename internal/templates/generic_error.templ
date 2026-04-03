@@ -1,0 +1,8 @@
+package templates
+
+templ GenericError(component templ.Component) {
+	<div hx-target="this">
+		@component
+		<p class="text-red-500">Something went wrong. Please try again.</p>
+	</div>
+}
