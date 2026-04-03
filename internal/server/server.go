@@ -25,7 +25,7 @@ func New(q *queries.Queries) *Server {
 	mux.Handle(routes.ListTodos.Pattern(), listtodos.New(q))
 	mux.Handle(routes.NewTodo.Pattern(), newtodo.NewTodo)
 	mux.Handle(routes.ToggleTodoComplete.Pattern(), toggletodocomplete.New(q))
-	mux.HandleFunc(routes.CreateTodo.Pattern(), createtodo.CreateTodo)
+	mux.Handle(routes.CreateTodo.Pattern(), createtodo.New(q))
 
 	wrappedMux := middleware.LogRequests(mux)
 

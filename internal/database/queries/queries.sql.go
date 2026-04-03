@@ -46,6 +46,17 @@ func (q *Queries) GetTodos(ctx context.Context) ([]Todo, error) {
 	return items, nil
 }
 
+const insertTodo = `-- name: InsertTodo :one
+INSERT INTO todos (title) VALUES ($1) RETURNING id, title, complete
+`
+
+func (q *Queries) InsertTodo(ctx context.Context, title string) (Todo, error) {
+	row := q.db.QueryRow(ctx, insertTodo, title)
+	var i Todo
+	err := row.Scan(&i.ID, &i.Title, &i.Complete)
+	return i, err
+}
+
 const updateTodoComplete = `-- name: UpdateTodoComplete :one
 UPDATE todos
 SET complete = $2

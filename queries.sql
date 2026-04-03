@@ -9,3 +9,6 @@ UPDATE todos
 SET complete = $2
 WHERE id = $1
 RETURNING *;
+
+-- name: InsertTodo :one
+INSERT INTO todos (title) VALUES ($1) RETURNING *;
