@@ -67,7 +67,9 @@ templ TodoForm(title string, err string) {
 			<input type="submit" class="py-2 px-4 bg-blue-900 " value="Add"/>
 		</form>
 		if err != "" {
-			<p class="text-red-500 mt-2">{ err }</p>
+			<div class="mt-2">
+				@Error(err)
+			</div>
 		}
 	</div>
 }
