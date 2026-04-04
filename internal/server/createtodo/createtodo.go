@@ -38,7 +38,7 @@ func (c CreateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templates.Todo(todoVm).Render(r.Context(), w)
+	templates.TodoListElement(todoVm, true).Render(r.Context(), w)
 }
 
 func (c CreateTodo) renderGenericError(w http.ResponseWriter, r *http.Request, title string, err error) {

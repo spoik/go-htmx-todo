@@ -8,11 +8,9 @@ import (
 templ Todos(todos []viewmodels.Todo) {
 	@layout() {
 		<h1 class="text-3xl">Todos</h1>
-		<ul class="mt-6 grid gap-4">
+		<ul id="todos" class="mt-6 grid gap-4">
 			for _, t:= range todos {
-				<li>
-					@Todo(t)
-				</li>
+				@TodoListElement(t, false)
 			}
 		</ul>
 		<div class="mt-3">
@@ -27,6 +25,17 @@ templ AddTodo() {
 		hx-get={ routes.NewTodo.Reverse() }
 		hx-swap="outerHTML"
 	>+ Add todo</a>
+}
+
+templ TodoListElement(todo viewmodels.Todo, appendToList bool) {
+	<li
+	if appendToList {
+		id="todos"
+		hx-swap-obb="beforeend"
+	}
+	>
+		@Todo(todo)
+	</li>
 }
 
 templ Todo(todo viewmodels.Todo) {
