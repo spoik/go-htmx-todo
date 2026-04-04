@@ -10,7 +10,7 @@ templ Todos(todos []viewmodels.Todo) {
 		<h1 class="text-3xl">Todos</h1>
 		<ul id="todos" class="mt-6 grid gap-4">
 			for _, t:= range todos {
-				@TodoListElement(t, false)
+				@TodoListElement(t)
 			}
 		</ul>
 		<div class="mt-3">
@@ -27,13 +27,8 @@ templ AddTodo() {
 	>+ Add todo</a>
 }
 
-templ TodoListElement(todo viewmodels.Todo, appendToList bool) {
-	<li
-	if appendToList {
-		id="todos"
-		hx-swap-obb="beforeend"
-	}
-	>
+templ TodoListElement(todo viewmodels.Todo) {
+	<li>
 		@Todo(todo)
 	</li>
 }
@@ -81,4 +76,12 @@ templ TodoForm(title string, err string) {
 			</div>
 		}
 	</div>
+}
+
+templ TodoCreated(todo viewmodels.Todo) {
+	<div id="todos" hx-swap-oob="afterbegin">
+		@TodoListElement(todo)
+	</div>
+
+	@AddTodo()
 }
