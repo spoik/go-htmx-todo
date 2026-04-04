@@ -49,12 +49,3 @@ func (c CreateTodo) renderGenericError(w http.ResponseWriter, r *http.Request, t
 		response.InternalServerError(w, r, err)
 	}
 }
-
-func (c CreateTodo) renderGenericError(w http.ResponseWriter, r *http.Request, title string, err error) {
-	log.UnhandledError(r, err)
-	err = templates.TodoForm(title, templates.GenericErrorMessage).Render(r.Context(), w)
-
-	if err != nil {
-		response.InternalServerError(w, r, err)
-	}
-}
