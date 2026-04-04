@@ -1,13 +1,13 @@
 package toggletodocomplete
 
 import (
-	"database/sql"
 	"errors"
 	"net/http"
 	"strconv"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
+	"github.com/spoik/go-htmx-todo/internal/server/log"
 	"github.com/spoik/go-htmx-todo/internal/server/response"
 	"github.com/spoik/go-htmx-todo/internal/templates"
 	"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
@@ -44,18 +44,14 @@ func (u toggleTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (que
 
 	if err != nil {
 		error := errors.New("Invalid todo id. Must be an integer.")
-		response.GenericHTMLError(w, r, error, nil)
+		templates.GenericHTMLError(w, r, error)
 		return queries.Todo{}, err
 	}
 
 	todo, err := u.queries.GetTodo(r.Context(), int32(idInt))
 
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			http.NotFound(w, r)
-		} else {
-			response.GenericHTMLError(w, r, err, nil)
-		}
+		templates.GenericHTMLError(w, r, err)
 
 		return queries.Todo{}, err
 	}
@@ -65,7 +61,7 @@ func (u toggleTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (que
 
 func (u toggleTodoComplete) toggleTodoComplete(w http.ResponseWriter, r *http.Request, todo queries.Todo) (queries.Todo, error) {
 	params := queries.UpdateTodoCompleteParams{
-		ID: todo.ID + 999999,
+		ID: todo.ID,
 		Complete: pgtype.Bool{
 			Bool:  !todo.Complete.Bool,
 			Valid: true,
@@ -90,11 +86,11 @@ func (u toggleTodoComplete) renderUpdatedTodo(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	templates.Todo(todoVm).Render(r.Context(), w)
+	templates.RenderOrInternalError(w, r, templates.Todo(todoVm, ""))
 }
 
 func (u toggleTodoComplete) genericHTMLError(w http.ResponseWriter, r *http.Request, todo queries.Todo, err error) {
-	// TODO: Figure out how to return this error without the generic error message being repeated over and over.
+	log.UnhandledError(r, err)
 	todoVm, err := viewmodels.NewTodo(todo)
 
 	if err != nil {
@@ -102,5 +98,5 @@ func (u toggleTodoComplete) genericHTMLError(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	response.GenericHTMLError(w, r, err, templates.Todo(todoVm))
+	templates.RenderOrInternalError(w, r, templates.Todo(todoVm, templates.GenericErrorMessage))
 }

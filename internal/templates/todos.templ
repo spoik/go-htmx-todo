@@ -29,28 +29,34 @@ templ AddTodo() {
 
 templ TodoListElement(todo viewmodels.Todo) {
 	<li>
-		@Todo(todo)
+		@Todo(todo, "")
 	</li>
 }
 
-templ Todo(todo viewmodels.Todo) {
-	<label
-		class="bg-blue-900 p-4 flex rounded-lg"
-		for={ todo.InputId() }
-		id={ todo.LabelId() }
-		hx-target="this"
-	>
-		<input
-			type="checkbox"
-			checked?={ todo.IsChecked() }
-			name={ todo.InputId() }
-			id={ todo.InputId() }
-			hx-put={ todo.ToggleCompleteUrl }
-			hx-trigger="change"
-			hx-swap="outerHTML"
-		/>
-		<p class="ml-4">{ todo.Title }</p>
-	</label>
+templ Todo(todo viewmodels.Todo, err string) {
+	<div hx-target="this">
+		<label
+			class="bg-blue-900 p-4 flex rounded-lg"
+			for={ todo.InputId() }
+			id={ todo.LabelId() }
+		>
+			<input
+				type="checkbox"
+				checked?={ todo.IsChecked() }
+				name={ todo.InputId() }
+				id={ todo.InputId() }
+				hx-put={ todo.ToggleCompleteUrl }
+				hx-trigger="change"
+				hx-swap="outerHTML"
+			/>
+			<p class="ml-4">{ todo.Title }</p>
+		</label>
+		if err != "" {
+			<div class="mt-2">
+				@Error(err)
+			</div>
+		}
+	</div>
 }
 
 templ TodoForm(title string, err string) {
@@ -82,6 +88,5 @@ templ TodoCreated(todo viewmodels.Todo) {
 	<div id="todos" hx-swap-oob="afterbegin">
 		@TodoListElement(todo)
 	</div>
-
 	@AddTodo()
 }

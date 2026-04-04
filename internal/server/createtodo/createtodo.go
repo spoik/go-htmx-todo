@@ -5,7 +5,6 @@ import (
 
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
 	"github.com/spoik/go-htmx-todo/internal/server/log"
-	"github.com/spoik/go-htmx-todo/internal/server/response"
 	"github.com/spoik/go-htmx-todo/internal/templates"
 	"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
 )
@@ -22,7 +21,6 @@ func (c CreateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	title := r.PostFormValue("title")
 
 	// TODO: Validate new todo
-	// templates.TodoForm(title, title).Render(r.Context(), w)
 
 	todo, err := c.queries.InsertTodo(r.Context(), title)
 
@@ -38,14 +36,10 @@ func (c CreateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templates.TodoCreated(todoVm).Render(r.Context(), w)
+	templates.RenderOrInternalError(w, r, templates.TodoCreated(todoVm))
 }
 
 func (c CreateTodo) renderGenericError(w http.ResponseWriter, r *http.Request, title string, err error) {
 	log.UnhandledError(r, err)
-	err = templates.TodoForm(title, templates.GenericErrorMessage).Render(r.Context(), w)
-
-	if err != nil {
-		response.InternalServerError(w, r, err)
-	}
+	templates.RenderOrInternalError(w, r, templates.TodoForm(title, templates.GenericErrorMessage))
 }
