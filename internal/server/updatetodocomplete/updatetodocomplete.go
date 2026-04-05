@@ -1,7 +1,6 @@
 package updatetodocomplete
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 
@@ -43,15 +42,14 @@ func (u toggleTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (que
 	idInt, err := strconv.ParseInt(id, 10, 32)
 
 	if err != nil {
-		error := errors.New("Invalid todo id. Must be an integer.")
-		templates.GenericHTMLError(w, r, error)
+		templates.GenericHTMLError(w, r)
 		return queries.Todo{}, err
 	}
 
 	todo, err := u.queries.GetTodo(r.Context(), int32(idInt))
 
 	if err != nil {
-		templates.GenericHTMLError(w, r, err)
+		templates.UnhandledError(w, r, err)
 
 		return queries.Todo{}, err
 	}

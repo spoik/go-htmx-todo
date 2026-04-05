@@ -34,7 +34,7 @@ templ TodoListElement(todo viewmodels.Todo) {
 }
 
 templ Todo(todo viewmodels.Todo, err string) {
-	<div hx-target="this">
+	<div>
 		<label
 			class="flex items-center bg-blue-900 p-4 rounded-lg group"
 			for={ todo.InputId() }
@@ -67,6 +67,8 @@ templ deleteTodoForm(todo viewmodels.Todo) {
 	<form
 		class="flex ml-auto invisible group-hover:visible"
 		hx-delete={ todo.DeleteUrl }
+		hx-target="closest li"
+		hx-swap="outerHTML"
 	>
 		<button class="inline-block cursor-pointer">
 			@trashIcon()
