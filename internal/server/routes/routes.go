@@ -7,9 +7,9 @@ var ListTodos = route{
 	path: "/",
 }
 
-var ToggleTodoComplete = route{
+var UpdateTodoComplete = route{
 	verb: http.MethodPut,
-	path: "/todo/{id}/togglecomplete",
+	path: "/todo/{id}/complete",
 }
 
 var NewTodo = route{
@@ -20,4 +20,9 @@ var NewTodo = route{
 var CreateTodo = route{
 	verb: http.MethodPost,
 	path: "/todo",
+}
+
+var DeleteTodo = route{
+	verb: http.MethodDelete,
+	path: "/todo/{id}",
 }

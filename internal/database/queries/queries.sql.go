@@ -11,6 +11,18 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const deleteTodo = `-- name: DeleteTodo :one
+DELETE FROM todos
+WHERE id=$1
+RETURNING id
+`
+
+func (q *Queries) DeleteTodo(ctx context.Context, id int32) (int32, error) {
+	row := q.db.QueryRow(ctx, deleteTodo, id)
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getTodo = `-- name: GetTodo :one
 SELECT id, title, complete FROM todos WHERE id=$1 LIMIT 1
 `

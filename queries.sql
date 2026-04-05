@@ -12,3 +12,8 @@ RETURNING *;
 
 -- name: InsertTodo :one
 INSERT INTO todos (title) VALUES ($1) RETURNING *;
+
+-- name: DeleteTodo :one
+DELETE FROM todos
+WHERE id=$1
+RETURNING id;
