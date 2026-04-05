@@ -54,7 +54,7 @@ templ Todo(todo viewmodels.Todo, err string) {
 
 templ todoCompleteForm(todo viewmodels.Todo) {
 	<form
-		hx-put={ todo.ToggleCompleteUrl }
+		hx-put={ todo.UpdateCompleteUrl }
 		hx-trigger="change"
 		hx-target="closest .todo-container"
 		hx-swap="outerHTML"

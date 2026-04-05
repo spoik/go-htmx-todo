@@ -12,15 +12,15 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
 )
 
-type toggleTodoComplete struct {
+type updateTodoComplete struct {
 	queries *queries.Queries
 }
 
-func New(q *queries.Queries) toggleTodoComplete {
-	return toggleTodoComplete{queries: q}
+func New(q *queries.Queries) updateTodoComplete {
+	return updateTodoComplete{queries: q}
 }
 
-func (u toggleTodoComplete) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (u updateTodoComplete) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	todo, err := u.getTodo(w, r)
 
 	if err != nil {
@@ -36,7 +36,7 @@ func (u toggleTodoComplete) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	u.renderUpdatedTodo(w, r, todo)
 }
 
-func (u toggleTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (queries.Todo, error) {
+func (u updateTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (queries.Todo, error) {
 	id := r.PathValue("id")
 
 	idInt, err := strconv.ParseInt(id, 10, 32)
@@ -57,7 +57,7 @@ func (u toggleTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (que
 	return todo, nil
 }
 
-func (u toggleTodoComplete) updateTodoComplete(w http.ResponseWriter, r *http.Request, todo queries.Todo) (queries.Todo, error) {
+func (u updateTodoComplete) updateTodoComplete(w http.ResponseWriter, r *http.Request, todo queries.Todo) (queries.Todo, error) {
 	complete := r.FormValue("complete") == "on"
 
 	params := queries.UpdateTodoCompleteParams{
@@ -78,7 +78,7 @@ func (u toggleTodoComplete) updateTodoComplete(w http.ResponseWriter, r *http.Re
 	return updatedTodo, nil
 }
 
-func (u toggleTodoComplete) renderUpdatedTodo(w http.ResponseWriter, r *http.Request, todo queries.Todo) {
+func (u updateTodoComplete) renderUpdatedTodo(w http.ResponseWriter, r *http.Request, todo queries.Todo) {
 	todoVm, err := viewmodels.NewTodo(todo)
 
 	if err != nil {
@@ -89,7 +89,7 @@ func (u toggleTodoComplete) renderUpdatedTodo(w http.ResponseWriter, r *http.Req
 	templates.RenderOrInternalError(w, r, templates.Todo(todoVm, ""))
 }
 
-func (u toggleTodoComplete) genericHTMLError(w http.ResponseWriter, r *http.Request, todo queries.Todo, err error) {
+func (u updateTodoComplete) genericHTMLError(w http.ResponseWriter, r *http.Request, todo queries.Todo, err error) {
 	log.UnhandledError(r, err)
 	todoVm, err := viewmodels.NewTodo(todo)
 

@@ -11,14 +11,14 @@ import (
 
 type Todo struct {
 	queries.Todo
-	ToggleCompleteUrl string
+	UpdateCompleteUrl string
 	DeleteUrl         string
 }
 
 func NewTodo(t queries.Todo) (Todo, error) {
 	id := strconv.Itoa(int(t.ID))
 
-	toggleCompleteUrl, err := routes.ToggleTodoComplete.Reverse("id", id)
+	updateTodoCompleteUrl, err := routes.UpdateTodoComplete.Reverse("id", id)
 
 	if err != nil {
 		return Todo{}, err
@@ -32,8 +32,8 @@ func NewTodo(t queries.Todo) (Todo, error) {
 
 	return Todo{
 		Todo:              t,
-		ToggleCompleteUrl: toggleCompleteUrl,
-		DeleteUrl: deleteUrl,
+		UpdateCompleteUrl: updateTodoCompleteUrl,
+		DeleteUrl:         deleteUrl,
 	}, nil
 }
 
