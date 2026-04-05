@@ -7,6 +7,7 @@ import (
 
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
 	"github.com/spoik/go-htmx-todo/internal/server/createtodo"
+	"github.com/spoik/go-htmx-todo/internal/server/deletetodo"
 	"github.com/spoik/go-htmx-todo/internal/server/listtodos"
 	"github.com/spoik/go-htmx-todo/internal/server/middleware"
 	"github.com/spoik/go-htmx-todo/internal/server/newtodo"
@@ -25,6 +26,7 @@ func New(q *queries.Queries) *Server {
 	mux.Handle(routes.NewTodo.Pattern(), newtodo.NewTodo)
 	mux.Handle(routes.ToggleTodoComplete.Pattern(), updatetodocomplete.New(q))
 	mux.Handle(routes.CreateTodo.Pattern(), createtodo.New(q))
+	mux.Handle(routes.DeleteTodo.Pattern(), deletetodo.New(q))
 
 	wrappedMux := middleware.LogRequests(mux)
 

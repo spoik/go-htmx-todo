@@ -21,3 +21,8 @@ var CreateTodo = route{
 	verb: http.MethodPost,
 	path: "/todo",
 }
+
+var DeleteTodo = route{
+	verb: http.MethodDelete,
+	path: "/todo/{id}",
+}

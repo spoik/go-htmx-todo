@@ -49,7 +49,10 @@ templ Todo(todo viewmodels.Todo, err string) {
 				/>
 				<p class="ml-4">{ todo.Title }</p>
 			</form>
-			<form action="/taco" class="flex ml-auto invisible group-hover:visible">
+			<form
+				class="flex ml-auto invisible group-hover:visible"
+				hx-delete={ todo.DeleteUrl }
+			>
 				<button class="inline-block cursor-pointer">
 					@TrashIcon()
 				</button>
