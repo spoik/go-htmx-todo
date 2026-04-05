@@ -11,13 +11,16 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const deleteTodo = `-- name: DeleteTodo :exec
-DELETE FROM todos WHERE id=$1
+const deleteTodo = `-- name: DeleteTodo :one
+DELETE FROM todos
+WHERE id=$1
+RETURNING id
 `
 
-func (q *Queries) DeleteTodo(ctx context.Context, id int32) error {
-	_, err := q.db.Exec(ctx, deleteTodo, id)
-	return err
+func (q *Queries) DeleteTodo(ctx context.Context, id int32) (int32, error) {
+	row := q.db.QueryRow(ctx, deleteTodo, id)
+	err := row.Scan(&id)
+	return id, err
 }
 
 const getTodo = `-- name: GetTodo :one
@@ -64,17 +67,6 @@ func (q *Queries) InsertTodo(ctx context.Context, title string) (Todo, error) {
 	var i Todo
 	err := row.Scan(&i.ID, &i.Title, &i.Complete)
 	return i, err
-}
-
-const todoExists = `-- name: TodoExists :one
-SELECT EXISTS(SELECT 1 FROM todos WHERE id=$1 LIMIT 1)
-`
-
-func (q *Queries) TodoExists(ctx context.Context, id int32) (bool, error) {
-	row := q.db.QueryRow(ctx, todoExists, id)
-	var exists bool
-	err := row.Scan(&exists)
-	return exists, err
 }
 
 const updateTodoComplete = `-- name: UpdateTodoComplete :one

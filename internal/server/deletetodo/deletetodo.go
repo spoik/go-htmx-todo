@@ -1,6 +1,8 @@
 package deletetodo
 
 import (
+	"database/sql"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -28,21 +30,9 @@ func (d deleteTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	exists, err := d.queries.TodoExists(r.Context(), idInt)
+	_, err = d.queries.DeleteTodo(r.Context(), idInt)
 
-	if err != nil {
-		templates.UnhandledError(w, r, err)
-		return
-	}
-
-	if !exists {
-		w.Write([]byte{})
-		return
-	}
-
-	err = d.queries.DeleteTodo(r.Context(), idInt)
-
-	if err != nil {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		templates.UnhandledError(w, r, err)
 		return
 	}

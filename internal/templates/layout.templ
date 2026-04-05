@@ -9,13 +9,6 @@ templ layout() {
 			<title>Go HTMX Todos</title>
 			<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 			<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>
-			<script>
-				document.addEventListener("DOMContentLoaded", function() {
-					document.body.addEventListener('htmx:targetError', function(evt) {
-						console.error("HTMX Target Not Found:", evt.detail.target);
-					});
-				});
-			</script>
 		</head>
 		<body class="bg-blue-950 text-slate-300 p-5">
 			<main>
