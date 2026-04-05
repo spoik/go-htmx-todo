@@ -62,6 +62,6 @@ func (t Todo) LabelId() string {
 	return "label-" + t.InputId()
 }
 
-func (t Todo) IsChecked() bool {
+func (t Todo) IsCompleted() bool {
 	return t.Complete.Bool
 }

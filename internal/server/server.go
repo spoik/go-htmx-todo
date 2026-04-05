@@ -8,10 +8,10 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
 	"github.com/spoik/go-htmx-todo/internal/server/createtodo"
 	"github.com/spoik/go-htmx-todo/internal/server/listtodos"
+	"github.com/spoik/go-htmx-todo/internal/server/updatetodocomplete"
 	"github.com/spoik/go-htmx-todo/internal/server/middleware"
 	"github.com/spoik/go-htmx-todo/internal/server/newtodo"
 	"github.com/spoik/go-htmx-todo/internal/server/routes"
-	"github.com/spoik/go-htmx-todo/internal/server/toggletodocomplete"
 )
 
 type Server struct {
@@ -24,7 +24,7 @@ func New(q *queries.Queries) *Server {
 
 	mux.Handle(routes.ListTodos.Pattern(), listtodos.New(q))
 	mux.Handle(routes.NewTodo.Pattern(), newtodo.NewTodo)
-	mux.Handle(routes.ToggleTodoComplete.Pattern(), toggletodocomplete.New(q))
+	mux.Handle(routes.ToggleTodoComplete.Pattern(), updatetodocomplete.New(q))
 	mux.Handle(routes.CreateTodo.Pattern(), createtodo.New(q))
 
 	wrappedMux := middleware.LogRequests(mux)

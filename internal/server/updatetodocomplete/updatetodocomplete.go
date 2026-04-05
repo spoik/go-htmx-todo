@@ -1,4 +1,4 @@
-package toggletodocomplete
+package updatetodocomplete
 
 import (
 	"errors"
@@ -28,7 +28,7 @@ func (u toggleTodoComplete) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	todo, err = u.toggleTodoComplete(w, r, todo)
+	todo, err = u.updateTodoComplete(w, r, todo)
 
 	if err != nil {
 		return
@@ -59,11 +59,13 @@ func (u toggleTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (que
 	return todo, nil
 }
 
-func (u toggleTodoComplete) toggleTodoComplete(w http.ResponseWriter, r *http.Request, todo queries.Todo) (queries.Todo, error) {
+func (u toggleTodoComplete) updateTodoComplete(w http.ResponseWriter, r *http.Request, todo queries.Todo) (queries.Todo, error) {
+	complete := r.FormValue("complete") == "on"
+
 	params := queries.UpdateTodoCompleteParams{
 		ID: todo.ID,
 		Complete: pgtype.Bool{
-			Bool:  !todo.Complete.Bool,
+			Bool:  complete,
 			Valid: true,
 		},
 	}
