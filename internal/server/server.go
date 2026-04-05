@@ -6,13 +6,13 @@ import (
 	"net/http"
 
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
-	"github.com/spoik/go-htmx-todo/internal/server/createtodo"
-	"github.com/spoik/go-htmx-todo/internal/server/deletetodo"
-	"github.com/spoik/go-htmx-todo/internal/server/listtodos"
+	"github.com/spoik/go-htmx-todo/internal/server/handlers/createtodo"
+	"github.com/spoik/go-htmx-todo/internal/server/handlers/deletetodo"
+	"github.com/spoik/go-htmx-todo/internal/server/handlers/listtodos"
+	"github.com/spoik/go-htmx-todo/internal/server/handlers/newtodo"
+	"github.com/spoik/go-htmx-todo/internal/server/handlers/updatetodocomplete"
 	"github.com/spoik/go-htmx-todo/internal/server/middleware"
-	"github.com/spoik/go-htmx-todo/internal/server/newtodo"
 	"github.com/spoik/go-htmx-todo/internal/server/routes"
-	"github.com/spoik/go-htmx-todo/internal/server/updatetodocomplete"
 )
 
 type Server struct {
