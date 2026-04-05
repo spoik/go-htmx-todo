@@ -34,7 +34,7 @@ templ TodoListElement(todo viewmodels.Todo) {
 }
 
 templ Todo(todo viewmodels.Todo, err string) {
-	<div>
+	<div class="todo-container">
 		<label
 			class="flex items-center bg-blue-900 p-4 rounded-lg group"
 			for={ todo.InputId() }
@@ -53,7 +53,12 @@ templ Todo(todo viewmodels.Todo, err string) {
 }
 
 templ todoCompleteForm(todo viewmodels.Todo) {
-	<form hx-put={ todo.ToggleCompleteUrl } hx-trigger="change" hx-swap="outerHTML">
+	<form
+		hx-put={ todo.ToggleCompleteUrl }
+		hx-trigger="change"
+		hx-target="closest .todo-container"
+		hx-swap="outerHTML"
+	>
 		<input
 			type="checkbox"
 			checked?={ todo.IsCompleted() }
