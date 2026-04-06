@@ -64,6 +64,7 @@ templ todoCompleteForm(todo viewmodels.Todo) {
 			checked?={ todo.IsCompleted() }
 			name="complete"
 			id={ todo.InputId() }
+			autocomplete="false"
 		/>
 	</form>
 }
