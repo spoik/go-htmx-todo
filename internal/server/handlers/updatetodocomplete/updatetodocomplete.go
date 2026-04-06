@@ -86,7 +86,7 @@ func (u updateTodoComplete) renderUpdatedTodo(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	templates.RenderOrInternalError(w, r, templates.Todo(todoVm, ""))
+	templates.Render(w, r, templates.Todo(todoVm, ""))
 }
 
 func (u updateTodoComplete) genericHTMLError(w http.ResponseWriter, r *http.Request, todo queries.Todo, err error) {
@@ -98,5 +98,5 @@ func (u updateTodoComplete) genericHTMLError(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	templates.RenderOrInternalError(w, r, templates.Todo(todoVm, templates.GenericErrorMessage))
+	templates.Render(w, r, templates.Todo(todoVm, templates.GenericErrorMessage))
 }

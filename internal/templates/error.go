@@ -15,6 +15,6 @@ func UnhandledError(w http.ResponseWriter, r *http.Request, err error) {
 }
 
 func GenericHTMLError(w http.ResponseWriter, r *http.Request) {
-	RenderOrInternalError(w, r, Error(GenericErrorMessage))
+	Render(w, r, Error(GenericErrorMessage))
 }
 

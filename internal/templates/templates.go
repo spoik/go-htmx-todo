@@ -7,7 +7,7 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/server/response"
 )
 
-func RenderOrInternalError(w http.ResponseWriter, r *http.Request, cmp templ.Component) {
+func Render(w http.ResponseWriter, r *http.Request, cmp templ.Component) {
 	err := cmp.Render(r.Context(), w)
 
 	if err != nil {

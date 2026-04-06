@@ -36,10 +36,10 @@ func (c CreateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templates.RenderOrInternalError(w, r, templates.TodoCreated(todoVm))
+	templates.Render(w, r, templates.TodoCreated(todoVm))
 }
 
 func (c CreateTodo) renderGenericError(w http.ResponseWriter, r *http.Request, title string, err error) {
 	log.UnhandledError(r, err)
-	templates.RenderOrInternalError(w, r, templates.TodoForm(title, templates.GenericErrorMessage))
+	templates.Render(w, r, templates.TodoForm(title, templates.GenericErrorMessage))
 }
