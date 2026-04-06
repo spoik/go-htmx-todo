@@ -1,3 +1,1 @@
-- (x) Switch from log to slog.
-- (x) Create a package to store routes and reverse them.
 - ( ) Use postgres pool

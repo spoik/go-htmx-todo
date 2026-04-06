@@ -88,16 +88,14 @@ templ trashIcon() {
 }
 
 templ TodoForm(title string, err string) {
-	<div hx-target="this">
-		<form
-			hx-post={ routes.CreateTodo.Reverse() }
-			class="flex gap-4"
-			hx-swap="outerHTML"
+	<div hx-target="this" hx-swap="outerHTML">
+		<form hx-post={ routes.CreateTodo.Reverse() } class="flex gap-4"
 		>
 			<label for="new-todo-title" class="sr-only">Title</label>
 			<input
 				type="text"
 				id="new-todo-title"
+				placeholder="New todo title"
 				autofocus
 				name="title"
 				class="flex-auto bg-white p-2 text-black"
