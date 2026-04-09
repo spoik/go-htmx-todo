@@ -13,3 +13,9 @@ type Todo struct {
 	Title    string
 	Complete pgtype.Bool
 }
+
+type TodoList struct {
+	ID        pgtype.UUID
+	Title     string
+	CreatedAt pgtype.Timestamptz
+}
