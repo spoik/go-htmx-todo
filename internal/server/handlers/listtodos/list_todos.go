@@ -23,19 +23,43 @@ func (l listTodos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	todos, err := l.queries.GetTodos(r.Context())
-
+	todos, err := l.getTodos(r)
 	if err != nil {
 		response.InternalServerError(w, r, err)
 		return
+	}
+
+	todoLists, err := l.getTodoLists(r)
+	if err != nil {
+		response.InternalServerError(w, r, err)
+		return
+	}
+
+	templates.Todos(todos, todoLists).Render(r.Context(), w)
+}
+
+func (l listTodos) getTodos(r *http.Request) ([]viewmodels.Todo, error) {
+	todos, err := l.queries.GetTodos(r.Context())
+	if err != nil {
+		return []viewmodels.Todo{}, err
 	}
 
 	todoVms, err := viewmodels.NewTodos(todos)
-
 	if err != nil {
-		response.InternalServerError(w, r, err)
-		return
+		return []viewmodels.Todo{}, err
+	}
+	return todoVms, nil
+}
+
+func (l listTodos) getTodoLists(r *http.Request) ([]viewmodels.TodoList, error) {
+	todoLists, err := l.queries.GetTodoLists(r.Context())
+	if err != nil {
+		return []viewmodels.TodoList{}, err
 	}
 
-	templates.Todos(todoVms).Render(r.Context(), w)
+	todoListVms, err := viewmodels.NewTodoLists(todoLists)
+	if err != nil {
+		return []viewmodels.TodoList{}, err
+	}
+	return todoListVms, nil
 }

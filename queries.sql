@@ -17,3 +17,7 @@ INSERT INTO todos (title) VALUES ($1) RETURNING *;
 DELETE FROM todos
 WHERE id=$1
 RETURNING id;
+
+-- name: GetTodoLists :many
+SELECT id, title, created_at FROM todo_lists ORDER BY title ASC;
+

@@ -34,6 +34,30 @@ func (q *Queries) GetTodo(ctx context.Context, id int32) (Todo, error) {
 	return i, err
 }
 
+const getTodoLists = `-- name: GetTodoLists :many
+SELECT id, title, created_at FROM todo_lists ORDER BY title ASC
+`
+
+func (q *Queries) GetTodoLists(ctx context.Context) ([]TodoList, error) {
+	rows, err := q.db.Query(ctx, getTodoLists)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []TodoList
+	for rows.Next() {
+		var i TodoList
+		if err := rows.Scan(&i.ID, &i.Title, &i.CreatedAt); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getTodos = `-- name: GetTodos :many
 SELECT id, title, complete FROM todos ORDER BY id DESC
 `
