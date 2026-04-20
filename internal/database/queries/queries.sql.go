@@ -24,13 +24,18 @@ func (q *Queries) DeleteTodo(ctx context.Context, id int32) (int32, error) {
 }
 
 const getTodo = `-- name: GetTodo :one
-SELECT id, title, complete FROM todos WHERE id=$1 LIMIT 1
+SELECT id, title, complete, todo_list_id FROM todos WHERE id=$1 LIMIT 1
 `
 
 func (q *Queries) GetTodo(ctx context.Context, id int32) (Todo, error) {
 	row := q.db.QueryRow(ctx, getTodo, id)
 	var i Todo
-	err := row.Scan(&i.ID, &i.Title, &i.Complete)
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Complete,
+		&i.TodoListID,
+	)
 	return i, err
 }
 
@@ -59,7 +64,7 @@ func (q *Queries) GetTodoLists(ctx context.Context) ([]TodoList, error) {
 }
 
 const getTodos = `-- name: GetTodos :many
-SELECT id, title, complete FROM todos ORDER BY id DESC
+SELECT id, title, complete, todo_list_id FROM todos ORDER BY id DESC
 `
 
 func (q *Queries) GetTodos(ctx context.Context) ([]Todo, error) {
@@ -71,7 +76,12 @@ func (q *Queries) GetTodos(ctx context.Context) ([]Todo, error) {
 	var items []Todo
 	for rows.Next() {
 		var i Todo
-		if err := rows.Scan(&i.ID, &i.Title, &i.Complete); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Complete,
+			&i.TodoListID,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -83,13 +93,18 @@ func (q *Queries) GetTodos(ctx context.Context) ([]Todo, error) {
 }
 
 const insertTodo = `-- name: InsertTodo :one
-INSERT INTO todos (title) VALUES ($1) RETURNING id, title, complete
+INSERT INTO todos (title) VALUES ($1) RETURNING id, title, complete, todo_list_id
 `
 
 func (q *Queries) InsertTodo(ctx context.Context, title string) (Todo, error) {
 	row := q.db.QueryRow(ctx, insertTodo, title)
 	var i Todo
-	err := row.Scan(&i.ID, &i.Title, &i.Complete)
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Complete,
+		&i.TodoListID,
+	)
 	return i, err
 }
 
@@ -97,7 +112,7 @@ const updateTodoComplete = `-- name: UpdateTodoComplete :one
 UPDATE todos
 SET complete = $2
 WHERE id = $1
-RETURNING id, title, complete
+RETURNING id, title, complete, todo_list_id
 `
 
 type UpdateTodoCompleteParams struct {
@@ -108,6 +123,11 @@ type UpdateTodoCompleteParams struct {
 func (q *Queries) UpdateTodoComplete(ctx context.Context, arg UpdateTodoCompleteParams) (Todo, error) {
 	row := q.db.QueryRow(ctx, updateTodoComplete, arg.ID, arg.Complete)
 	var i Todo
-	err := row.Scan(&i.ID, &i.Title, &i.Complete)
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Complete,
+		&i.TodoListID,
+	)
 	return i, err
 }

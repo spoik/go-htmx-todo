@@ -9,9 +9,10 @@ import (
 )
 
 type Todo struct {
-	ID       int32
-	Title    string
-	Complete pgtype.Bool
+	ID         int32
+	Title      string
+	Complete   pgtype.Bool
+	TodoListID pgtype.UUID
 }
 
 type TodoList struct {
