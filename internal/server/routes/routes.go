@@ -2,6 +2,11 @@ package routes
 
 import "net/http"
 
+var Root = route{
+	verb: http.MethodGet,
+	path: "/",
+}
+
 var ListTodos = route{
 	verb: http.MethodGet,
 	path: "/lists/{todoListId}",

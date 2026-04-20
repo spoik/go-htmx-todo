@@ -10,6 +10,7 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/server/handlers/deletetodo"
 	"github.com/spoik/go-htmx-todo/internal/server/handlers/listtodos"
 	"github.com/spoik/go-htmx-todo/internal/server/handlers/newtodo"
+	"github.com/spoik/go-htmx-todo/internal/server/handlers/root"
 	"github.com/spoik/go-htmx-todo/internal/server/handlers/updatetodocomplete"
 	"github.com/spoik/go-htmx-todo/internal/server/middleware"
 	"github.com/spoik/go-htmx-todo/internal/server/routes"
@@ -22,6 +23,7 @@ type Server struct {
 func New(q *queries.Queries) *Server {
 	mux := http.NewServeMux()
 
+	mux.Handle(routes.Root.Pattern(), root.New(q))
 	mux.Handle(routes.ListTodos.Pattern(), listtodos.New(q))
 	mux.HandleFunc(routes.NewTodo.Pattern(), newtodo.NewTodo)
 	mux.Handle(routes.UpdateTodoComplete.Pattern(), updatetodocomplete.New(q))
