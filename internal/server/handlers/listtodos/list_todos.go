@@ -3,6 +3,7 @@ package listtodos
 import (
 	"net/http"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
 	"github.com/spoik/go-htmx-todo/internal/server/response"
 	"github.com/spoik/go-htmx-todo/internal/templates"
@@ -18,12 +19,20 @@ func New(q *queries.Queries) listTodos {
 }
 
 func (l listTodos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
+	todoListIdStr := r.PathValue("todoListId")
+	if todoListIdStr == "" {
 		http.NotFound(w, r)
 		return
 	}
 
-	todos, err := l.getTodos(r)
+	var todoListId pgtype.UUID
+	err := todoListId.Scan(todoListIdStr)
+	if err != nil {
+		response.InternalServerError(w, r, err)
+		return
+	}
+
+	todos, err := l.getTodos(r, todoListId)
 	if err != nil {
 		response.InternalServerError(w, r, err)
 		return
@@ -35,11 +44,11 @@ func (l listTodos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templates.Todos(todos, todoLists).Render(r.Context(), w)
+	templates.Todos(todoListIdStr, todos, todoLists).Render(r.Context(), w)
 }
 
-func (l listTodos) getTodos(r *http.Request) ([]viewmodels.Todo, error) {
-	todos, err := l.queries.GetTodos(r.Context())
+func (l listTodos) getTodos(r *http.Request, todoListId pgtype.UUID) ([]viewmodels.Todo, error) {
+	todos, err := l.queries.GetTodos(r.Context(), todoListId)
 	if err != nil {
 		return []viewmodels.Todo{}, err
 	}

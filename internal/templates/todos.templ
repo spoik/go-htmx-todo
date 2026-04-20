@@ -5,7 +5,7 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
 )
 
-templ Todos(todos []viewmodels.Todo, todoLists []viewmodels.TodoList) {
+templ Todos(todoListId string, todos []viewmodels.Todo, todoLists []viewmodels.TodoList) {
 	@layout() {
 		<div class="flex">
 			@sidebar(todoLists)
@@ -17,7 +17,7 @@ templ Todos(todos []viewmodels.Todo, todoLists []viewmodels.TodoList) {
 					}
 				</ul>
 				<div class="mt-3">
-					@AddTodo()
+					@AddTodo(todoListId)
 				</div>
 			</div>
 		</div>
@@ -38,10 +38,10 @@ templ sidebar(todoLists []viewmodels.TodoList) {
 	</aside>
 }
 
-templ AddTodo() {
+templ AddTodo(todoListId string) {
 	<a
 		href="#"
-		hx-get={ routes.NewTodo.Reverse() }
+		hx-get={ routes.NewTodo.Reverse("todoListId", todoListId) }
 		hx-swap="outerHTML"
 	>+ Add todo</a>
 }
@@ -107,10 +107,11 @@ templ trashIcon() {
 	</svg>
 }
 
-templ TodoForm(title string, err string) {
+templ TodoForm(todoListId string, title string, err string) {
 	<div hx-target="this" hx-swap="outerHTML">
 		<form hx-post={ routes.CreateTodo.Reverse() } class="flex gap-4"
 		>
+			<input type="hidden" name="todo_list_id" value={ todoListId } />
 			<label for="new-todo-title" class="sr-only">Title</label>
 			<input
 				type="text"
@@ -135,5 +136,5 @@ templ TodoCreated(todo viewmodels.Todo) {
 	<div id="todos" hx-swap-oob="afterbegin">
 		@TodoListElement(todo)
 	</div>
-	@AddTodo()
+	@AddTodo(todo.TodoListID.String())
 }

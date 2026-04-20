@@ -64,11 +64,11 @@ func (q *Queries) GetTodoLists(ctx context.Context) ([]TodoList, error) {
 }
 
 const getTodos = `-- name: GetTodos :many
-SELECT id, title, complete, todo_list_id FROM todos ORDER BY id DESC
+SELECT id, title, complete, todo_list_id FROM todos WHERE todo_list_id = $1 ORDER BY id DESC
 `
 
-func (q *Queries) GetTodos(ctx context.Context) ([]Todo, error) {
-	rows, err := q.db.Query(ctx, getTodos)
+func (q *Queries) GetTodos(ctx context.Context, todoListID pgtype.UUID) ([]Todo, error) {
+	rows, err := q.db.Query(ctx, getTodos, todoListID)
 	if err != nil {
 		return nil, err
 	}
@@ -93,11 +93,16 @@ func (q *Queries) GetTodos(ctx context.Context) ([]Todo, error) {
 }
 
 const insertTodo = `-- name: InsertTodo :one
-INSERT INTO todos (title) VALUES ($1) RETURNING id, title, complete, todo_list_id
+INSERT INTO todos (title, todo_list_id) VALUES ($1, $2) RETURNING id, title, complete, todo_list_id
 `
 
-func (q *Queries) InsertTodo(ctx context.Context, title string) (Todo, error) {
-	row := q.db.QueryRow(ctx, insertTodo, title)
+type InsertTodoParams struct {
+	Title      string
+	TodoListID pgtype.UUID
+}
+
+func (q *Queries) InsertTodo(ctx context.Context, arg InsertTodoParams) (Todo, error) {
+	row := q.db.QueryRow(ctx, insertTodo, arg.Title, arg.TodoListID)
 	var i Todo
 	err := row.Scan(
 		&i.ID,

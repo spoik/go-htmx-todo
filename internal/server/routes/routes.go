@@ -4,7 +4,7 @@ import "net/http"
 
 var ListTodos = route{
 	verb: http.MethodGet,
-	path: "/",
+	path: "/lists/{todoListId}",
 }
 
 var UpdateTodoComplete = route{
@@ -14,7 +14,7 @@ var UpdateTodoComplete = route{
 
 var NewTodo = route{
 	verb: http.MethodGet,
-	path: "/todo/new",
+	path: "/lists/{todoListId}/todo/new",
 }
 
 var CreateTodo = route{

@@ -13,7 +13,7 @@ type TodoList struct {
 }
 
 func NewTodoList(tl queries.TodoList) (TodoList, error) {
-	todosUrl, err := routes.ListTodos.Reverse("listID", tl.ID.String())
+	todosUrl, err := routes.ListTodos.Reverse("todoListId", tl.ID.String())
 	if err != nil {
 		return TodoList{}, err
 	}
