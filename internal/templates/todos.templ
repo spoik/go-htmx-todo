@@ -8,7 +8,7 @@ import (
 templ Todos(todoListId string, todos []viewmodels.Todo, todoLists []viewmodels.TodoList) {
 	@layout() {
 		<div class="flex">
-			@sidebar(todoLists)
+			@sidebar(todoListId, todoLists)
 			<div class="flex-grow p-6">
 				<h1 class="text-3xl">Todos</h1>
 				<ul id="todos" class="mt-6 grid gap-4">
@@ -24,12 +24,15 @@ templ Todos(todoListId string, todos []viewmodels.Todo, todoLists []viewmodels.T
 	}
 }
 
-templ sidebar(todoLists []viewmodels.TodoList) {
+templ sidebar(activeTodoListId string, todoLists []viewmodels.TodoList) {
 	<aside class="w-64 bg-blue-900 p-4 sticky top-0 h-screen">
 		<ul>
 			for _, tl := range todoLists {
 				<li>
-					<a href={ tl.TodosUrl } class="block py-2 px-3 hover:bg-blue-800 rounded">
+					<a
+						href={ tl.TodosUrl }
+						class={ "block py-2 px-3 hover:bg-blue-800 rounded", templ.KV("bg-blue-800", tl.ID.String() == activeTodoListId) }
+					>
 						{ tl.Title }
 					</a>
 				</li>
