@@ -53,5 +53,5 @@ func (c CreateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (c CreateTodo) renderGenericError(w http.ResponseWriter, r *http.Request, todoListId string, title string, err error) {
 	log.UnhandledError(r, err)
-	templates.Render(w, r, templates.TodoForm(todoListId, title, templates.GenericErrorMessage))
+	templates.Render(w, r, templates.NewTodoForm(todoListId, title, templates.GenericErrorMessage))
 }

@@ -12,5 +12,5 @@ func NewTodo(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	templates.Render(w, r, templates.TodoForm(todoListId, "", ""))
+	templates.Render(w, r, templates.NewTodoForm(todoListId, "", ""))
 }
