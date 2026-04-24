@@ -1,6 +1,6 @@
 ## General Rules
 - Use concise technical language when speaking. Keep it brief.
-- If you are not 100% certain on how to implement a change, ask me for clarification. Never make assumptions.
+- If you are not 100% certain on how to implement a new feature or change, ask me for clarification by presenting me with some possible solutions. Never make assumptions.
 
 ## Code Rules
 - When creating a new struct, if it has methods, put it in it's own file named after the name of the struct itself.

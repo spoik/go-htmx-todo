@@ -31,3 +31,13 @@ var DeleteTodo = route{
 	verb: http.MethodDelete,
 	path: "/todo/{id}",
 }
+
+var NewTodoList = route{
+	verb: http.MethodGet,
+	path: "/lists/new",
+}
+
+var CreateTodoList = route{
+	verb: http.MethodPost,
+	path: "/lists",
+}

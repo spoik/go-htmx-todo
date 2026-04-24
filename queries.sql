@@ -21,3 +21,6 @@ RETURNING id;
 -- name: GetTodoLists :many
 SELECT id, title, created_at FROM todo_lists ORDER BY title ASC;
 
+-- name: InsertTodoList :one
+INSERT INTO todo_lists (title) VALUES ($1) RETURNING *;
+

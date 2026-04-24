@@ -113,6 +113,17 @@ func (q *Queries) InsertTodo(ctx context.Context, arg InsertTodoParams) (Todo, e
 	return i, err
 }
 
+const insertTodoList = `-- name: InsertTodoList :one
+INSERT INTO todo_lists (title) VALUES ($1) RETURNING id, title, created_at
+`
+
+func (q *Queries) InsertTodoList(ctx context.Context, title string) (TodoList, error) {
+	row := q.db.QueryRow(ctx, insertTodoList, title)
+	var i TodoList
+	err := row.Scan(&i.ID, &i.Title, &i.CreatedAt)
+	return i, err
+}
+
 const updateTodoComplete = `-- name: UpdateTodoComplete :one
 UPDATE todos
 SET complete = $2
