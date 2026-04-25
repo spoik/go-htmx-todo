@@ -9,15 +9,15 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
 )
 
-type CreateTodoList struct {
+type createTodoList struct {
 	queries *queries.Queries
 }
 
-func New(q *queries.Queries) CreateTodoList {
-	return CreateTodoList{queries: q}
+func New(q *queries.Queries) createTodoList {
+	return createTodoList{queries: q}
 }
 
-func (c CreateTodoList) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (c createTodoList) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	title := r.PostFormValue("title")
 
 	if title == "" {

@@ -10,15 +10,15 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
 )
 
-type CreateTodo struct {
+type createTodo struct {
 	queries *queries.Queries
 }
 
-func New(q *queries.Queries) CreateTodo {
-	return CreateTodo{queries: q}
+func New(q *queries.Queries) createTodo {
+	return createTodo{queries: q}
 }
 
-func (c CreateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (c createTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	title := r.PostFormValue("title")
 	todoListIdStr := r.PostFormValue("todo_list_id")
 
@@ -51,7 +51,7 @@ func (c CreateTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	templates.Render(w, r, templates.TodoCreated(todoVm))
 }
 
-func (c CreateTodo) renderGenericError(w http.ResponseWriter, r *http.Request, todoListId string, title string, err error) {
+func (c createTodo) renderGenericError(w http.ResponseWriter, r *http.Request, todoListId string, title string, err error) {
 	log.UnhandledError(r, err)
 	templates.Render(w, r, templates.NewTodoForm(todoListId, title, templates.GenericErrorMessage))
 }
