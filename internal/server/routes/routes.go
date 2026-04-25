@@ -2,6 +2,8 @@ package routes
 
 import "net/http"
 
+// TODO: Split todo and todo lists routes into their own files.
+
 var Root = route{
 	verb: http.MethodGet,
 	path: "/",
