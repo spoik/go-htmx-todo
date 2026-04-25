@@ -17,7 +17,7 @@ func New(verb string, path string) dynamicRoute {
 	if !strings.ContainsAny(path, "{}") {
 		panic(
 			fmt.Sprintf(
-				"Route does not contain any parameters. Use a route instead: %s %s",
+				"Route does not contain any parameters. Use a staticRoute instead: %s %s",
 				verb,
 				path,
 			),
