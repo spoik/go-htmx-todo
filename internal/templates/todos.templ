@@ -5,8 +5,7 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
 )
 
-// TODO: Reduce the number of arguments. Maybe this accepts an interface so that a common viewmodel could be
-// passed to multiple templates.
+
 templ SidebarAndTodos(todoListId string, todos []viewmodels.Todo, todoLists []viewmodels.TodoList) {
 	@layout() {
 		<div class="flex">
