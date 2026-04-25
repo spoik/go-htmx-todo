@@ -39,5 +39,12 @@ func (c CreateTodoList) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templates.Render(w, r, templates.TodoListCreated(tlVm))
+	atlVm, err := viewmodels.NewAddTodoList()
+	if err != nil {
+		log.UnhandledError(r, err)
+		templates.Render(w, r, templates.TodoListForm(title, templates.GenericErrorMessage))
+		return
+	}
+
+	templates.Render(w, r, templates.TodoListCreated(tlVm, atlVm))
 }

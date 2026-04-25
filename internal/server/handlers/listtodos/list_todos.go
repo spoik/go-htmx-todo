@@ -44,7 +44,13 @@ func (l listTodos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templates.SidebarAndTodos(todoListIdStr, todos, todoLists).Render(r.Context(), w)
+	addTodoList, err := viewmodels.NewAddTodoList()
+	if err != nil {
+		response.InternalServerError(w, r, err)
+		return
+	}
+
+	templates.SidebarAndTodos(todoListIdStr, todos, todoLists, addTodoList).Render(r.Context(), w)
 }
 
 func (l listTodos) getTodos(r *http.Request, todoListId pgtype.UUID) ([]viewmodels.Todo, error) {

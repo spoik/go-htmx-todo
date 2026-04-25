@@ -5,14 +5,16 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
 )
 
-templ TodoLists(activeTodoListId string, todoLists []viewmodels.TodoList) {
+// TODO: Reduce the number of arguments. Maybe this accepts an interface so that a common viewmodel could be
+// passed to multiple templates.
+templ TodoLists(activeTodoListId string, todoLists []viewmodels.TodoList, avm viewmodels.AddTodoList) {
 	<ul id="sidebar-list" class="flex flex-col gap-1">
 		for _, tl := range todoLists {
 			@TodoListSidebarElement(tl, activeTodoListId == tl.ID.String())
 		}
 	</ul>
 	<div class="mt-3">
-		@AddTodoList()
+		@AddTodoList(avm)
 	</div>
 }
 
@@ -27,11 +29,10 @@ templ TodoListSidebarElement(tl viewmodels.TodoList, isActive bool) {
 	</li>
 }
 
-templ AddTodoList() {
-	// TODO: Move route reversal into a view model so route reversal errors can be handled in the server handler.
+templ AddTodoList(vm viewmodels.AddTodoList) {
 	<a
 		href="#"
-		hx-get={ routes.NewTodoList.Reverse() }
+		hx-get={ vm.Url }
 		hx-swap="outerHTML"
 		class="text-sm text-blue-300 hover:text-white"
 	>+ new list</a>
@@ -72,9 +73,9 @@ templ TodoListForm(title string, err string) {
 	</div>
 }
 
-templ TodoListCreated(tl viewmodels.TodoList) {
+templ TodoListCreated(tl viewmodels.TodoList, atl viewmodels.AddTodoList) {
 	<div id="sidebar-list" hx-swap-oob="beforeend">
 		@TodoListSidebarElement(tl, false)
 	</div>
-	@AddTodoList()
+	@AddTodoList(atl)
 }
