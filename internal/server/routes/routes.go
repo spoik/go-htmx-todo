@@ -2,9 +2,14 @@ package routes
 
 import "net/http"
 
-var ListTodos = route{
+var Root = route{
 	verb: http.MethodGet,
 	path: "/",
+}
+
+var ListTodos = route{
+	verb: http.MethodGet,
+	path: "/lists/{todoListId}",
 }
 
 var UpdateTodoComplete = route{
@@ -14,7 +19,7 @@ var UpdateTodoComplete = route{
 
 var NewTodo = route{
 	verb: http.MethodGet,
-	path: "/todo/new",
+	path: "/lists/{todoListId}/todo/new",
 }
 
 var CreateTodo = route{
@@ -25,4 +30,19 @@ var CreateTodo = route{
 var DeleteTodo = route{
 	verb: http.MethodDelete,
 	path: "/todo/{id}",
+}
+
+var NewTodoList = route{
+	verb: http.MethodGet,
+	path: "/lists/new",
+}
+
+var CancelNewTodoList = route{
+	verb: http.MethodGet,
+	path: "/lists/new/cancel",
+}
+
+var CreateTodoList = route{
+	verb: http.MethodPost,
+	path: "/lists",
 }

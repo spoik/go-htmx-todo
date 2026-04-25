@@ -1,0 +1,80 @@
+package templates
+
+import (
+	"github.com/spoik/go-htmx-todo/internal/server/routes"
+	"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
+)
+
+templ TodoLists(activeTodoListId string, todoLists []viewmodels.TodoList) {
+	<ul id="sidebar-list" class="flex flex-col gap-1">
+		for _, tl := range todoLists {
+			@TodoListSidebarElement(tl, activeTodoListId == tl.ID.String())
+		}
+	</ul>
+	<div class="mt-3">
+		@AddTodoList()
+	</div>
+}
+
+templ TodoListSidebarElement(tl viewmodels.TodoList, isActive bool) {
+	<li>
+		<a
+			href={ tl.TodosUrl }
+			class={ "block py-2 px-3 hover:bg-blue-800 rounded", templ.KV("bg-blue-800", isActive) }
+		>
+			{ tl.Title }
+		</a>
+	</li>
+}
+
+templ AddTodoList() {
+	// TODO: Move route reversal into a view model so route reversal errors can be handled in the server handler.
+	<a
+		href="#"
+		hx-get={ routes.NewTodoList.Reverse() }
+		hx-swap="outerHTML"
+		class="text-sm text-blue-300 hover:text-white"
+	>+ new list</a>
+}
+
+templ TodoListForm(title string, err string) {
+	<div hx-target="this" hx-swap="outerHTML">
+		// TODO: Move route reversal into a view model so route reversal errors can be handled in the server handler.
+		<form hx-post={ routes.CreateTodoList.Reverse() } class="flex flex-col gap-2">
+			<label for="new-list-title" class="sr-only">Title</label>
+			<input
+				type="text"
+				id="new-list-title"
+				placeholder="New list title"
+				autofocus
+				name="title"
+				class="bg-white p-2 text-black text-sm rounded"
+				value={ title }
+			/>
+			<div class="flex gap-2">
+				<input
+					type="submit"
+					class="py-1 px-3 bg-blue-700 hover:bg-blue-600 rounded text-sm cursor-pointer"
+					value="Create"
+				/>
+				<button
+					type="button"
+					hx-get={ routes.CancelNewTodoList.Reverse() }
+					class="text-xs text-blue-300 hover:text-white"
+				>Cancel</button>
+			</div>
+		</form>
+		if err != "" {
+			<div class="mt-2 text-xs text-red-400">
+				{ err }
+			</div>
+		}
+	</div>
+}
+
+templ TodoListCreated(tl viewmodels.TodoList) {
+	<div id="sidebar-list" hx-swap-oob="beforeend">
+		@TodoListSidebarElement(tl, false)
+	</div>
+	@AddTodoList()
+}
