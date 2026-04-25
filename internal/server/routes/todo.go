@@ -2,13 +2,6 @@ package routes
 
 import "net/http"
 
-// TODO: Split todo and todo lists routes into their own files.
-
-var Root = route{
-	verb: http.MethodGet,
-	path: "/",
-}
-
 var ListTodos = route{
 	verb: http.MethodGet,
 	path: "/lists/{todoListId}",
@@ -34,17 +27,3 @@ var DeleteTodo = route{
 	path: "/todo/{id}",
 }
 
-var NewTodoList = route{
-	verb: http.MethodGet,
-	path: "/lists/new",
-}
-
-var CancelNewTodoList = route{
-	verb: http.MethodGet,
-	path: "/lists/new/cancel",
-}
-
-var CreateTodoList = route{
-	verb: http.MethodPost,
-	path: "/lists",
-}
