@@ -6,7 +6,7 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/templates"
 )
 
-func NewTodo(w http.ResponseWriter, r *http.Request) {
+func Handler(w http.ResponseWriter, r *http.Request) {
 	todoListId := r.PathValue("todoListId")
 	if todoListId == "" {
 		http.NotFound(w, r)
