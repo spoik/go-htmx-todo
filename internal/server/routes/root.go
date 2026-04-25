@@ -1,9 +1,8 @@
 package routes
 
-import "net/http"
+import (
+	"net/http"
+	"github.com/spoik/go-htmx-todo/internal/server/routes/staticroute"
+)
 
-var Root = route{
-	verb: http.MethodGet,
-	path: "/",
-}
-
+var Root = staticroute.New(http.MethodGet, "/")

@@ -1,29 +1,18 @@
 package routes
 
-import "net/http"
+import (
+	"net/http"
 
-var ListTodos = route{
-	verb: http.MethodGet,
-	path: "/lists/{todoListId}",
-}
+	"github.com/spoik/go-htmx-todo/internal/server/routes/dynamicroute"
+	"github.com/spoik/go-htmx-todo/internal/server/routes/staticroute"
+)
 
-var UpdateTodoComplete = route{
-	verb: http.MethodPut,
-	path: "/todo/{id}/complete",
-}
+var ListTodos = dynamicroute.New(http.MethodGet, "/lists/{todoListId}")
 
-var NewTodo = route{
-	verb: http.MethodGet,
-	path: "/lists/{todoListId}/todo/new",
-}
+var UpdateTodoComplete = dynamicroute.New(http.MethodPut, "/todo/{id}/complete")
 
-var CreateTodo = route{
-	verb: http.MethodPost,
-	path: "/todo",
-}
+var NewTodo = dynamicroute.New(http.MethodGet, "/lists/{todoListId}/todo/new")
 
-var DeleteTodo = route{
-	verb: http.MethodDelete,
-	path: "/todo/{id}",
-}
+var CreateTodo = staticroute.New(http.MethodPost, "/todo")
 
+var DeleteTodo = dynamicroute.New(http.MethodDelete, "/todo/{id}")

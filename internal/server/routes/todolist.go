@@ -1,18 +1,13 @@
 package routes
 
-import "net/http"
+import (
+	"net/http"
 
-var NewTodoList = route{
-	verb: http.MethodGet,
-	path: "/lists/new",
-}
+	"github.com/spoik/go-htmx-todo/internal/server/routes/staticroute"
+)
 
-var CancelNewTodoList = route{
-	verb: http.MethodGet,
-	path: "/lists/new/cancel",
-}
+var NewTodoList = staticroute.New(http.MethodGet, "/lists/new")
 
-var CreateTodoList = route{
-	verb: http.MethodPost,
-	path: "/lists",
-}
+var CancelNewTodoList = staticroute.New(http.MethodGet, "/lists/new/cancel")
+
+var CreateTodoList = staticroute.New(http.MethodPost, "/lists")
