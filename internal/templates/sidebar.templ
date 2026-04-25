@@ -28,6 +28,7 @@ templ TodoListSidebarElement(tl viewmodels.TodoList, isActive bool) {
 }
 
 templ AddTodoList() {
+	// TODO: Move route reversal into a view model so route reversal errors can be handled in the server handler.
 	<a
 		href="#"
 		hx-get={ routes.NewTodoList.Reverse() }
@@ -38,6 +39,7 @@ templ AddTodoList() {
 
 templ TodoListForm(title string, err string) {
 	<div hx-target="this" hx-swap="outerHTML">
+		// TODO: Move route reversal into a view model so route reversal errors can be handled in the server handler.
 		<form hx-post={ routes.CreateTodoList.Reverse() } class="flex flex-col gap-2">
 			<label for="new-list-title" class="sr-only">Title</label>
 			<input
@@ -50,12 +52,14 @@ templ TodoListForm(title string, err string) {
 				value={ title }
 			/>
 			<div class="flex gap-2">
-				<input type="submit" class="py-1 px-3 bg-blue-700 hover:bg-blue-600 rounded text-sm cursor-pointer" value="Create"/>
+				<input
+					type="submit"
+					class="py-1 px-3 bg-blue-700 hover:bg-blue-600 rounded text-sm cursor-pointer"
+					value="Create"
+				/>
 				<button
 					type="button"
-					hx-get=""
-					hx-target="closest div"
-					hx-swap="outerHTML"
+					hx-get={ routes.CancelNewTodoList.Reverse() }
 					class="text-xs text-blue-300 hover:text-white"
 				>Cancel</button>
 			</div>
