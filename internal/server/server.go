@@ -30,8 +30,8 @@ func New(q *queries.Queries) *Server {
 
 	// Todo handlers
 	mux.Handle(routes.ListTodos.Pattern(), listtodos.New(q))
-	mux.HandleFunc(routes.NewTodo.Pattern(), newtodo.Handler)
 	mux.Handle(routes.UpdateTodoComplete.Pattern(), updatetodocomplete.New(q))
+	mux.HandleFunc(routes.NewTodo.Pattern(), newtodo.Handler)
 	mux.Handle(routes.CreateTodo.Pattern(), createtodo.New(q))
 	mux.Handle(routes.DeleteTodo.Pattern(), deletetodo.New(q))
 
