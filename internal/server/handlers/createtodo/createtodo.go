@@ -11,6 +11,18 @@ import (
 	"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
 )
 
+type formTodo struct {
+	todoListId string
+	title      string
+}
+
+func newFormTodo(r *http.Request) formTodo {
+	return formTodo{
+		todoListId: r.PostFormValue("todo_list_id"),
+		title:      r.PostFormValue("title"),
+	}
+}
+
 type createTodo struct {
 	queries *queries.Queries
 }
@@ -20,29 +32,28 @@ func New(q *queries.Queries) createTodo {
 }
 
 func (c createTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	title := r.PostFormValue("title")
-	todoListId := r.PostFormValue("todo_list_id")
+	formTodo := newFormTodo(r)
 
-	todoVm, err := c.insertTodo(r.Context(), todoListId, title)
+	// TODO: Validate new todo
+
+	todoVm, err := c.insertTodo(r.Context(), formTodo)
 
 	if err != nil {
-		c.renderGenericError(w, r, todoListId, title, err)
+		c.renderGenericError(w, r, formTodo, err)
 		return
 	}
 
 	templates.Render(w, r, templates.TodoCreated(todoVm))
 }
 
-func (c createTodo) insertTodo(ctx context.Context, todoListId, title string) (todoVm viewmodels.Todo, err error) {
+func (c createTodo) insertTodo(ctx context.Context, formTodo formTodo) (todoVm viewmodels.Todo, err error) {
 	var todoListUUID pgtype.UUID
-	if err = todoListUUID.Scan(todoListId); err != nil {
+	if err = todoListUUID.Scan(formTodo.todoListId); err != nil {
 		return
 	}
 
-	// TODO: Validate new todo
-
 	todo, err := c.queries.InsertTodo(ctx, queries.InsertTodoParams{
-		Title:      title,
+		Title:      formTodo.title,
 		TodoListID: todoListUUID,
 	})
 
@@ -53,7 +64,14 @@ func (c createTodo) insertTodo(ctx context.Context, todoListId, title string) (t
 	return viewmodels.NewTodo(todo)
 }
 
-func (c createTodo) renderGenericError(w http.ResponseWriter, r *http.Request, todoListId string, title string, err error) {
+func (c createTodo) renderGenericError(w http.ResponseWriter, r *http.Request, formTodo formTodo, err error) {
 	log.UnhandledError(r, err)
-	templates.Render(w, r, templates.NewTodoForm(todoListId, title, templates.GenericErrorMessage))
+
+	template := templates.NewTodoForm(
+		formTodo.todoListId,
+		formTodo.title,
+		templates.GenericErrorMessage,
+	)
+
+	templates.Render(w, r, template)
 }
