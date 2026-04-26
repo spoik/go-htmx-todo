@@ -23,12 +23,12 @@ func (d deleteTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	parsedId, err := strconv.ParseInt(id, 10, 32)
 
-	idInt := int32(parsedId)
-
 	if err != nil {
 		templates.GenericError(w, r, err)
 		return
 	}
+
+	idInt := int32(parsedId)
 
 	_, err = d.queries.DeleteTodo(r.Context(), idInt)
 
