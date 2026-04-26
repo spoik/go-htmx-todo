@@ -36,28 +36,26 @@ func (u updateTodoComplete) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	u.renderUpdatedTodo(w, r, todo)
 }
 
-func (u updateTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (queries.Todo, error) {
+func (u updateTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (todo queries.Todo, err error) {
 	id := r.PathValue("id")
 
 	idInt, err := strconv.ParseInt(id, 10, 32)
 
 	if err != nil {
 		templates.GenericHTMLError(w, r)
-		return queries.Todo{}, err
+		return
 	}
 
-	todo, err := u.queries.GetTodo(r.Context(), int32(idInt))
+	todo, err = u.queries.GetTodo(r.Context(), int32(idInt))
 
 	if err != nil {
 		templates.UnhandledError(w, r, err)
-
-		return queries.Todo{}, err
 	}
 
-	return todo, nil
+	return
 }
 
-func (u updateTodoComplete) updateTodoComplete(w http.ResponseWriter, r *http.Request, todo queries.Todo) (queries.Todo, error) {
+func (u updateTodoComplete) updateTodoComplete(w http.ResponseWriter, r *http.Request, todo queries.Todo) (updatedTodo queries.Todo, err error) {
 	complete := r.FormValue("complete") == "on"
 
 	params := queries.UpdateTodoCompleteParams{
@@ -68,14 +66,13 @@ func (u updateTodoComplete) updateTodoComplete(w http.ResponseWriter, r *http.Re
 		},
 	}
 
-	updatedTodo, err := u.queries.UpdateTodoComplete(r.Context(), params)
+	updatedTodo, err = u.queries.UpdateTodoComplete(r.Context(), params)
 
 	if err != nil {
 		u.genericHTMLError(w, r, todo, err)
-		return queries.Todo{}, err
 	}
 
-	return updatedTodo, nil
+	return
 }
 
 func (u updateTodoComplete) renderUpdatedTodo(w http.ResponseWriter, r *http.Request, todo queries.Todo) {
