@@ -1,6 +1,7 @@
 package createtodo
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -20,35 +21,36 @@ func New(q *queries.Queries) createTodo {
 
 func (c createTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	title := r.PostFormValue("title")
-	todoListIdStr := r.PostFormValue("todo_list_id")
+	todoListId := r.PostFormValue("todo_list_id")
 
-	var todoListId pgtype.UUID
-	err := todoListId.Scan(todoListIdStr)
+	todoVm, err := c.insertTodo(r.Context(), todoListId, title)
+
 	if err != nil {
-		c.renderGenericError(w, r, todoListIdStr, title, err)
+		c.renderGenericError(w, r, todoListId, title, err)
+		return
+	}
+
+	templates.Render(w, r, templates.TodoCreated(todoVm))
+}
+
+func (c createTodo) insertTodo(ctx context.Context, todoListId, title string) (todoVm viewmodels.Todo, err error) {
+	var todoListUUID pgtype.UUID
+	if err = todoListUUID.Scan(todoListId); err != nil {
 		return
 	}
 
 	// TODO: Validate new todo
 
-	todo, err := c.queries.InsertTodo(r.Context(), queries.InsertTodoParams{
+	todo, err := c.queries.InsertTodo(ctx, queries.InsertTodoParams{
 		Title:      title,
-		TodoListID: todoListId,
+		TodoListID: todoListUUID,
 	})
 
 	if err != nil {
-		c.renderGenericError(w, r, todoListIdStr, title, err)
 		return
 	}
 
-	todoVm, err := viewmodels.NewTodo(todo)
-
-	if err != nil {
-		c.renderGenericError(w, r, todoListIdStr, title, err)
-		return
-	}
-
-	templates.Render(w, r, templates.TodoCreated(todoVm))
+	return viewmodels.NewTodo(todo)
 }
 
 func (c createTodo) renderGenericError(w http.ResponseWriter, r *http.Request, todoListId string, title string, err error) {
