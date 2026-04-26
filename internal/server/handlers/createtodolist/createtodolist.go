@@ -27,17 +27,20 @@ func (c createTodoList) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	tl, err := c.queries.InsertTodoList(r.Context(), title)
 	if err != nil {
-		log.UnhandledError(r, err)
-		templates.Render(w, r, templates.TodoListForm(title, templates.GenericErrorMessage))
+		c.genericErrorResponse(w, r, title, err)
 		return
 	}
 
 	tlVm, err := viewmodels.NewTodoList(tl)
 	if err != nil {
-		log.UnhandledError(r, err)
-		templates.Render(w, r, templates.TodoListForm(title, templates.GenericErrorMessage))
+		c.genericErrorResponse(w, r, title, err)
 		return
 	}
 
 	templates.Render(w, r, templates.TodoListCreated(tlVm))
+}
+
+func (c createTodoList) genericErrorResponse(w http.ResponseWriter, r *http.Request, title string, err error) {
+	log.UnhandledError(r, err)
+	templates.Render(w, r, templates.TodoListForm(title, templates.GenericErrorMessage))
 }
