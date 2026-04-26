@@ -12,15 +12,22 @@ type TodoList struct {
 	TodosUrl string
 }
 
-func NewTodoList(tl queries.TodoList) (TodoList, error) {
-	todosUrl, err := routes.ListTodos.Reverse("todoListId", tl.ID.String())
+func NewTodoList(tl queries.TodoList) (todoList TodoList, err error) {
+	todosUrl, err := routes.ListTodos.Reverse(
+		"todoListId",
+		tl.ID.String(),
+	)
+
 	if err != nil {
-		return TodoList{}, err
+		return
 	}
-	return TodoList{
+
+	todoList = TodoList{
 		TodoList: tl,
 		TodosUrl: todosUrl,
-	}, nil
+	}
+
+	return
 }
 
 func NewTodoLists(todoLists []queries.TodoList) ([]TodoList, error) {
