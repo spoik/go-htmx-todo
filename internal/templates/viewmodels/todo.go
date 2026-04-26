@@ -15,26 +15,28 @@ type Todo struct {
 	DeleteUrl         string
 }
 
-func NewTodo(t queries.Todo) (Todo, error) {
+func NewTodo(t queries.Todo) (todo Todo, err error) {
 	id := strconv.Itoa(int(t.ID))
 
 	updateTodoCompleteUrl, err := routes.UpdateTodoComplete.Reverse("id", id)
 
 	if err != nil {
-		return Todo{}, err
+		return
 	}
 
 	deleteUrl, err := routes.DeleteTodo.Reverse("id", id)
 
 	if err != nil {
-		return Todo{}, err
+		return
 	}
 
-	return Todo{
+	todo = Todo{
 		Todo:              t,
 		UpdateCompleteUrl: updateTodoCompleteUrl,
 		DeleteUrl:         deleteUrl,
-	}, nil
+	}
+
+	return
 }
 
 func NewTodos(todos []queries.Todo) ([]Todo, error) {
