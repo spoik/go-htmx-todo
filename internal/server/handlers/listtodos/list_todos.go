@@ -38,7 +38,7 @@ func (l listTodos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	templates.SidebarAndTodos(todoListId, todos, todoLists).Render(r.Context(), w)
+	templates.Render(w, r, templates.SidebarAndTodos(todoListId, todos, todoLists))
 }
 
 func (l listTodos) getTodos(c context.Context, todoListId string) (vms []viewmodels.Todo, err error) {
