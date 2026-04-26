@@ -1,6 +1,7 @@
 package listtodos
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -19,36 +20,34 @@ func New(q *queries.Queries) listTodos {
 }
 
 func (l listTodos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	todoListIdStr := r.PathValue("todoListId")
-	if todoListIdStr == "" {
+	todoListId := r.PathValue("todoListId")
+	if todoListId == "" {
 		http.NotFound(w, r)
 		return
 	}
 
-	var todoListId pgtype.UUID
-	err := todoListId.Scan(todoListIdStr)
+	todos, err := l.getTodos(r.Context(), todoListId)
 	if err != nil {
 		response.InternalServerError(w, r, err)
 		return
 	}
 
-	todos, err := l.getTodos(r, todoListId)
+	todoLists, err := l.getTodoLists(r.Context())
 	if err != nil {
 		response.InternalServerError(w, r, err)
 		return
 	}
 
-	todoLists, err := l.getTodoLists(r)
-	if err != nil {
-		response.InternalServerError(w, r, err)
-		return
-	}
-
-	templates.SidebarAndTodos(todoListIdStr, todos, todoLists).Render(r.Context(), w)
+	templates.SidebarAndTodos(todoListId, todos, todoLists).Render(r.Context(), w)
 }
 
-func (l listTodos) getTodos(r *http.Request, todoListId pgtype.UUID) ([]viewmodels.Todo, error) {
-	todos, err := l.queries.GetTodos(r.Context(), todoListId)
+func (l listTodos) getTodos(c context.Context, todoListId string) ([]viewmodels.Todo, error) {
+	var todoListUUID pgtype.UUID
+	if err := todoListUUID.Scan(todoListId); err != nil {
+		return []viewmodels.Todo{}, err
+	}
+
+	todos, err := l.queries.GetTodos(c, todoListUUID)
 	if err != nil {
 		return []viewmodels.Todo{}, err
 	}
@@ -60,8 +59,8 @@ func (l listTodos) getTodos(r *http.Request, todoListId pgtype.UUID) ([]viewmode
 	return todoVms, nil
 }
 
-func (l listTodos) getTodoLists(r *http.Request) ([]viewmodels.TodoList, error) {
-	todoLists, err := l.queries.GetTodoLists(r.Context())
+func (l listTodos) getTodoLists(c context.Context) ([]viewmodels.TodoList, error) {
+	todoLists, err := l.queries.GetTodoLists(c)
 	if err != nil {
 		return []viewmodels.TodoList{}, err
 	}
