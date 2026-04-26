@@ -41,33 +41,25 @@ func (l listTodos) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	templates.SidebarAndTodos(todoListId, todos, todoLists).Render(r.Context(), w)
 }
 
-func (l listTodos) getTodos(c context.Context, todoListId string) ([]viewmodels.Todo, error) {
+func (l listTodos) getTodos(c context.Context, todoListId string) (vms []viewmodels.Todo, err error) {
 	var todoListUUID pgtype.UUID
-	if err := todoListUUID.Scan(todoListId); err != nil {
-		return []viewmodels.Todo{}, err
+	if err = todoListUUID.Scan(todoListId); err != nil {
+		return
 	}
 
 	todos, err := l.queries.GetTodos(c, todoListUUID)
 	if err != nil {
-		return []viewmodels.Todo{}, err
+		return
 	}
 
-	todoVms, err := viewmodels.NewTodos(todos)
-	if err != nil {
-		return []viewmodels.Todo{}, err
-	}
-	return todoVms, nil
+	return viewmodels.NewTodos(todos)
 }
 
-func (l listTodos) getTodoLists(c context.Context) ([]viewmodels.TodoList, error) {
+func (l listTodos) getTodoLists(c context.Context) (vms []viewmodels.TodoList, err error) {
 	todoLists, err := l.queries.GetTodoLists(c)
 	if err != nil {
-		return []viewmodels.TodoList{}, err
+		return
 	}
 
-	todoListVms, err := viewmodels.NewTodoLists(todoLists)
-	if err != nil {
-		return []viewmodels.TodoList{}, err
-	}
-	return todoListVms, nil
+	return viewmodels.NewTodoLists(todoLists)
 }
