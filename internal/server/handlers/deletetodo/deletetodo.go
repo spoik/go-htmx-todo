@@ -26,14 +26,14 @@ func (d deleteTodo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	idInt := int32(parsedId)
 
 	if err != nil {
-		templates.GenericHTMLError(w, r)
+		templates.GenericError(w, r, err)
 		return
 	}
 
 	_, err = d.queries.DeleteTodo(r.Context(), idInt)
 
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		templates.UnhandledError(w, r, err)
+		templates.GenericError(w, r, err)
 		return
 	}
 

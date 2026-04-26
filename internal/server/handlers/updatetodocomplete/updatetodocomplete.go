@@ -6,8 +6,6 @@ import (
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/spoik/go-htmx-todo/internal/database/queries"
-	"github.com/spoik/go-htmx-todo/internal/server/log"
-	"github.com/spoik/go-htmx-todo/internal/server/response"
 	"github.com/spoik/go-htmx-todo/internal/templates"
 	"github.com/spoik/go-htmx-todo/internal/templates/viewmodels"
 )
@@ -21,19 +19,21 @@ func New(q *queries.Queries) updateTodoComplete {
 }
 
 func (u updateTodoComplete) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	todo, err := u.getTodo(w, r)
+	origTodo, err := u.getTodo(w, r)
 
 	if err != nil {
+		templates.GenericError(w, r, err)
 		return
 	}
 
-	todo, err = u.updateTodoComplete(w, r, todo)
+	updatedTodo, err := u.updateTodoComplete(w, r, origTodo)
 
 	if err != nil {
+		u.genericHTMLError(w, r, origTodo, err)
 		return
 	}
 
-	u.renderUpdatedTodo(w, r, todo)
+	templates.Render(w, r, templates.Todo(updatedTodo, ""))
 }
 
 func (u updateTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (todo queries.Todo, err error) {
@@ -42,56 +42,36 @@ func (u updateTodoComplete) getTodo(w http.ResponseWriter, r *http.Request) (tod
 	idInt, err := strconv.ParseInt(id, 10, 32)
 
 	if err != nil {
-		templates.GenericHTMLError(w, r)
 		return
 	}
 
-	todo, err = u.queries.GetTodo(r.Context(), int32(idInt))
-
-	if err != nil {
-		templates.UnhandledError(w, r, err)
-	}
-
-	return
+	return u.queries.GetTodo(r.Context(), int32(idInt))
 }
 
-func (u updateTodoComplete) updateTodoComplete(w http.ResponseWriter, r *http.Request, todo queries.Todo) (updatedTodo queries.Todo, err error) {
-	complete := r.FormValue("complete") == "on"
+func (u updateTodoComplete) updateTodoComplete(w http.ResponseWriter, r *http.Request, todo queries.Todo) (todoVm viewmodels.Todo, err error) {
+	var complete pgtype.Bool
+	if err = complete.Scan(r.FormValue("complete") == "on"); err != nil {
+		return
+	}
 
 	params := queries.UpdateTodoCompleteParams{
-		ID: todo.ID,
-		Complete: pgtype.Bool{
-			Bool:  complete,
-			Valid: true,
-		},
+		ID:       todo.ID,
+		Complete: complete,
 	}
 
-	updatedTodo, err = u.queries.UpdateTodoComplete(r.Context(), params)
-
+	updatedTodo, err := u.queries.UpdateTodoComplete(r.Context(), params)
 	if err != nil {
-		u.genericHTMLError(w, r, todo, err)
-	}
-
-	return
-}
-
-func (u updateTodoComplete) renderUpdatedTodo(w http.ResponseWriter, r *http.Request, todo queries.Todo) {
-	todoVm, err := viewmodels.NewTodo(todo)
-
-	if err != nil {
-		response.InternalServerError(w, r, err)
 		return
 	}
 
-	templates.Render(w, r, templates.Todo(todoVm, ""))
+	return viewmodels.NewTodo(updatedTodo)
 }
 
 func (u updateTodoComplete) genericHTMLError(w http.ResponseWriter, r *http.Request, todo queries.Todo, err error) {
-	log.UnhandledError(r, err)
 	todoVm, err := viewmodels.NewTodo(todo)
 
 	if err != nil {
-		response.InternalServerError(w, r, err)
+		templates.GenericError(w, r, err)
 		return
 	}
 
